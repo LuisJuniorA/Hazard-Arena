@@ -80,10 +80,6 @@ function playerMovement() {
     if (keys['ArrowRight'] || keys['d']) {
         dx = 1;
     }
-    if (dx && dy) {
-        dx *= Math.SQRT1_2;
-        dy *= Math.SQRT1_2;
-    }
     player.move(dx, dy);
 }
 
