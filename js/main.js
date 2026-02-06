@@ -46,6 +46,8 @@ function render() {
         }
     }
 
+    //drawEntities();
+
     ctx.fillStyle = 'red';
     ctx.fillRect(
         canvas.width / 2 - 10,
@@ -65,22 +67,27 @@ function update() {
 
     playerMovement();
 }
-
+let pastKeys = {};
 function playerMovement() {
     let dx = 0, dy = 0;
+
     if (keys['ArrowUp'] || keys['z'] || keys['w']) {
-        dy = -1;
+        dy += -1;
     }
     if (keys['ArrowDown'] || keys['s']) {
-        dy = 1;
+        dy += 1;
     }
     if (keys['ArrowLeft'] || keys['q'] || keys['a']) {
-        dx = -1;
+        dx += -1;
     }
     if (keys['ArrowRight'] || keys['d']) {
-        dx = 1;
+        dx += 1;
     }
-    player.move(dx, dy);
+    player.move(dx+px, dy+py);
+    if (JSON.stringify(keys) !== JSON.stringify(pastKeys)) {
+        //console.log(keys); //debug keys
+        pastKeys = JSON.parse(JSON.stringify(keys));
+    }
 }
 
 window.addEventListener('keydown', (e) => {
