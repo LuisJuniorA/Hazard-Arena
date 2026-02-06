@@ -1,9 +1,13 @@
+import AvoidOtherEnemies from './behaviors/AvoidOtherEnemies.js';
 import Player from './class/Player.js';
+import PointBlack from './class/enemy/PointBlack.js';
 
 window.onload = init;
 
+const enemies = [];
+AvoidOtherEnemies.enemies = enemies;
 let canvas, ctx;
-let time = 0;
+let lastTime = 0;
 const timeIncr = 1/60;
 let backgroundImage = new Image();
 backgroundImage.src = './assets/background_map/map1_background.png';
@@ -16,15 +20,17 @@ function init() {
     ctx.imageSmoothingEnabled = false;
 
     player = new Player(canvas.width / 2, canvas.height / 2);
-
-    animationLoop();
+    enemies.push(new PointBlack(200, 100, player));
+    enemies.push(new PointBlack(-150, 80, player));
+    animationLoop(lastTime);
 }
 
-function animationLoop(time) {
+function animationLoop(timestamp) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+    const dt = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
     render();
-    update();
+    update(dt);
 
     requestAnimationFrame(animationLoop);
 }
@@ -46,13 +52,8 @@ function render() {
         }
     }
 
-    ctx.fillStyle = 'red';
-    ctx.fillRect(
-        canvas.width / 2 - 10,
-        canvas.height / 2 - 10,
-        20,
-        20
-    );
+    player.render(ctx, canvas);
+    for (const e of enemies) e.render(ctx, canvas);
     
     //les personnages et background ont tous leu vraie position + position x y du joueur pour que tout soit centré sur le joueur
     /*The player, the map, and all entities have an (x, y) position; however, since the camera is centered on the player, 
@@ -60,10 +61,11 @@ function render() {
     as the player does not truly move—only the relative positions within the map change.*/
 }
 
-function update() {
+function update(dt) {
     //mouvements et collisions
 
     playerMovement();
+    for (const e of enemies) e.update(dt);
 }
 
 function playerMovement() {

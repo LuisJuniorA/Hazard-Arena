@@ -6,7 +6,7 @@ export default class Player {
 
         this.hp = 300; // corresponds to 3 bars of health, each bar representing 100 hp
         this.healingRate = 0;
-        
+
         this.attackDamage = 0.5;
         this.attackRange = 50; // in pixels
         this.attackSpeed = 1; // attacks per second
@@ -19,9 +19,9 @@ export default class Player {
     }
 
     move(dx, dy) {
-        this.x += dx * this.speed *Math.SQRT1_2;
-        this.y += dy * this.speed *Math.SQRT1_2;
-    }   
+        this.x += dx * this.speed * Math.SQRT1_2;
+        this.y += dy * this.speed * Math.SQRT1_2;
+    }
 
     takeDamage(amount) {
         this.hp -= amount;
@@ -61,12 +61,22 @@ export default class Player {
     }
 
     upgrade(type) {//todo change to the good format
-        switch(type) {
+        switch (type) {
             case 'attackDamage':
                 this.attackDamage += 0.5;
                 break;
             default:
                 break;
         }
+    }
+
+    render(ctx, canvas) {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(
+            canvas.width / 2 - 10,
+            canvas.height / 2 - 10,
+            20,
+            20
+        );
     }
 }
