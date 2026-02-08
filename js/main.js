@@ -3,6 +3,7 @@ import PlayerAttack from './behaviors/PlayerAttack.js';
 import Player from './class/Player.js';
 import Projectile from './class/Projectile.js';
 import PointBlack from './class/enemy/PointBlack.js';
+import EntityManager from './utils/EntityManager.js';
 
 window.onload = init;
 
@@ -13,7 +14,7 @@ PlayerAttack.enemies = enemies;
 Projectile.projectiles = projectiles;
 let canvas, ctx;
 let lastTime = 0;
-const timeIncr = 1/60;
+const timeIncr = 1 / 60;
 let backgroundImage = new Image();
 backgroundImage.src = './assets/background_map/map1_background.png';
 let player;
@@ -60,7 +61,7 @@ function render() {
     player.render(ctx, canvas);
     for (const p of projectiles) p.render(ctx, canvas, player);
     for (const e of enemies) e.render(ctx, canvas);
-    
+
     //les personnages et background ont tous leu vraie position + position x y du joueur pour que tout soit centré sur le joueur
     /*The player, the map, and all entities have an (x, y) position; however, since the camera is centered on the player, 
     rendering is done by offsetting every object’s position by the player’s coordinates. As a result, the player’s (x, y) position is mostly conceptual, 
@@ -74,6 +75,9 @@ function update(dt) {
     for (const p of projectiles) p.update(dt);
     for (const e of enemies) e.update(dt);
     player.update(dt);
+    EntityManager.cleanupInPlace(enemies);
+    EntityManager.cleanupInPlace(projectiles);
+
 }
 
 function playerMovement() {
