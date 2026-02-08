@@ -1,3 +1,5 @@
+import PlayerAttack from "../behaviors/PlayerAttack.js";
+
 export default class Player {
     constructor(x, y) {
         this.x = x;
@@ -6,7 +8,7 @@ export default class Player {
 
         this.hp = 300; // corresponds to 3 bars of health, each bar representing 100 hp
         this.healingRate = 0;
-        
+
         this.attackDamage = 0.5;
         this.attackRange = 50; // in pixels
         this.attackSpeed = 1; // attacks per second
@@ -16,12 +18,15 @@ export default class Player {
         this.experience = 0; // out of 100
         this.experienceRate = 0.5; // experience multiplier
         this.experienceGrabRange = 30; // in pixels
+        this.behaviors = []
+
+        this.addBehavior(new PlayerAttack());
     }
 
     move(dx, dy) {
-        this.x += dx * this.speed *Math.SQRT1_2;
-        this.y += dy * this.speed *Math.SQRT1_2;
-    }   
+        this.x += dx * this.speed * Math.SQRT1_2;
+        this.y += dy * this.speed * Math.SQRT1_2;
+    }
 
     takeDamage(amount) {
         this.hp -= amount;
@@ -61,12 +66,31 @@ export default class Player {
     }
 
     upgrade(type) {//todo change to the good format
-        switch(type) {
+        switch (type) {
             case 'attackDamage':
                 this.attackDamage += 0.5;
                 break;
             default:
                 break;
         }
+    }
+
+    render(ctx, canvas) {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(
+            canvas.width / 2 - 10,
+            canvas.height / 2 - 10,
+            20,
+            20
+        );
+    }
+
+    update(dt){
+        for (const b of this.behaviors) b.update(dt);
+    }
+
+    addBehavior(behavior) {
+        behavior.entity = this;
+        this.behaviors.push(behavior);
     }
 }
