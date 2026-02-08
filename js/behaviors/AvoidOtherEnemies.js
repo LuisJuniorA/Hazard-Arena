@@ -11,7 +11,7 @@ export default class AvoidOtherEnemies {
     }
 
     update(dt) {
-        const e = this.enemy;
+        const e = this.entity;
         if (!e) return;
 
         for (const other of AvoidOtherEnemies.enemies) {

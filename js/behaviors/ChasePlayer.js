@@ -1,6 +1,6 @@
 export default class ChasePlayer {
     update(dt) {
-        const e = this.enemy;
+        const e = this.entity;
         const p = e.player;
         if (!p) return;
         const dx = p.x - e.x;

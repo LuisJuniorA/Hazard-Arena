@@ -7,7 +7,7 @@ export default class Enemy {
 
         this.hp = config.hp;
         this.speed = config.speed;
-        this.damage = 300;
+        this.damage = 1;
 
         this.radius = config.radius ?? 8;
         this.color = config.color ?? 'black';
@@ -17,7 +17,7 @@ export default class Enemy {
     }
 
     addBehavior(behavior) {
-        behavior.enemy = this;
+        behavior.entity = this;
         this.behaviors.push(behavior);
     }
 

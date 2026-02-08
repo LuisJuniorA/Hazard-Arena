@@ -8,7 +8,7 @@ export default class ContactDamage {
         this.timer -= dt;
         if (this.timer > 0) return;
 
-        const e = this.enemy;
+        const e = this.entity;
         const p = e.player;
 
         const dist = Math.hypot(e.x - p.x, e.y - p.y);

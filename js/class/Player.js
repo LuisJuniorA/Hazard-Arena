@@ -1,3 +1,5 @@
+import PlayerAttack from "../behaviors/PlayerAttack.js";
+
 export default class Player {
     constructor(x, y) {
         this.x = x;
@@ -16,6 +18,9 @@ export default class Player {
         this.experience = 0; // out of 100
         this.experienceRate = 0.5; // experience multiplier
         this.experienceGrabRange = 30; // in pixels
+        this.behaviors = []
+
+        this.addBehavior(new PlayerAttack());
     }
 
     move(dx, dy) {
@@ -78,5 +83,14 @@ export default class Player {
             20,
             20
         );
+    }
+
+    update(dt){
+        for (const b of this.behaviors) b.update(dt);
+    }
+
+    addBehavior(behavior) {
+        behavior.entity = this;
+        this.behaviors.push(behavior);
     }
 }
