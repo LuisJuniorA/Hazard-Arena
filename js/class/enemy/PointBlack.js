@@ -4,12 +4,13 @@ import ContactDamage from '../../behaviors/ContactDamage.js';
 import AvoidOtherEnemies from '../../behaviors/AvoidOtherEnemies.js';
 
 export default class PointBlack extends Enemy {
-    constructor(x, y, player) {
-        super(x, y, player, {
+    constructor(x, y, level) {
+        super(x, y, level, {
             hp: 1,
             speed: 80,
             radius: 6,
-            color: 'black'
+            color: 'black',
+            xpAmount: 1
         });
 
         this.addBehavior(new ChasePlayer());
