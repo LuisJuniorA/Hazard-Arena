@@ -1,6 +1,7 @@
-import AvoidOtherEnemies from "../behaviors/AvoidOtherEnemies.js";
-import PlayerAttack from "../behaviors/PlayerAttack.js";
-import Projectile from "./Projectile.js";
+import EntityManager from '../utils/EntityManager.js';
+import EnemySpawner from '../behaviors/EnemySpawner.js'
+import PointBlack from './enemy/PointBlack.js';
+import Player from './Player.js';
 
 export default class Level {
     constructor(name, backgroundSrc) {
@@ -8,16 +9,18 @@ export default class Level {
         this.backgroundImage = new Image();
         this.backgroundImage.src = backgroundSrc;
 
-        this.player = null;          // joueur
-        this.enemies = [];           // ennemis
-        this.projectiles = [];       // projectiles
-        this.xpEntities = [];        // XP drops
+        this.player = new Player(canvas.width / 2, canvas.height / 2, this)
+        this.enemies = [];
+        this.projectiles = [];
+        this.xpEntities = [];
 
-        this.width = 2000;
-        this.height = 2000;
-        AvoidOtherEnemies.enemies = this.enemies;
-        PlayerAttack.enemies = this.enemies;
-        Projectile.projectiles = this.projectiles;
+        this.behaviors = [];
+        this.behaviors.push(new EnemySpawner(
+            this.enemies,
+            this.player,
+            PointBlack,
+            { duration: 900, spawnInterval: 1, spawnIncrementInterval: 5 }
+        ));
     }
 
     // -------- Player --------
@@ -40,32 +43,50 @@ export default class Level {
         this.xpEntities.push(xp);
     }
 
+    // -------- Update --------
+    update(dt) {
+        // 1: behaviors (spawner, hazards, etc.)
+        for (const b of this.behaviors) b.update?.(dt, this);
+
+        // 2: update entités
+        this.player?.update(dt, this);
+
+        for (const e of this.enemies) e.update(dt, this);
+        for (const p of this.projectiles) p.update(dt, this);
+        for (const xp of this.xpEntities) xp.update?.(dt, this);
+
+        // 3: cleanup entités mortes
+        EntityManager.cleanupInPlace(this.enemies);
+        EntityManager.cleanupInPlace(this.projectiles);
+        EntityManager.cleanupInPlace(this.xpEntities);
+    }
+
     // -------- Render --------
     render(ctx, canvas) {
         if (!this.player) return;
-        const player = this.player;
 
-        // Background centré sur le joueur
-        const bgW = this.backgroundImage.width;
-        const bgH = this.backgroundImage.height;
-        const cameraX = player.x - canvas.width / 2;
-        const cameraY = player.y - canvas.height / 2;
+        const cameraX = this.player.x - canvas.width / 2;
+        const cameraY = this.player.y - canvas.height / 2;
 
-        const startX = - (cameraX % bgW);
-        const startY = - (cameraY % bgH);
+        const bg = this.backgroundImage;
+        const bgW = bg.width;
+        const bgH = bg.height;
+        const startX = -(cameraX % bgW);
+        const startY = -(cameraY % bgH);
 
+        // Draw background
         for (let x = startX - bgW; x < canvas.width; x += bgW) {
             for (let y = startY - bgH; y < canvas.height; y += bgH) {
-                ctx.drawImage(this.backgroundImage, x, y);
+                ctx.drawImage(bg, x, y);
             }
         }
 
-        // Entities
+        // Draw entities
         for (const e of this.enemies) e.render(ctx, canvas);
-        for (const p of this.projectiles) p.render(ctx, canvas, player);
-        for (const xp of this.xpEntities) xp.render(ctx, canvas, player);
+        for (const p of this.projectiles) p.render(ctx, canvas, this.player);
+        for (const xp of this.xpEntities) xp.render?.(ctx, canvas, this.player);
 
-        // Player
-        player.render(ctx, canvas);
+        // Draw player last (on top)
+        this.player.render(ctx, canvas);
     }
 }
