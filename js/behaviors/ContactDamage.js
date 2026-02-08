@@ -9,7 +9,8 @@ export default class ContactDamage {
         if (this.timer > 0) return;
 
         const e = this.entity;
-        const p = e.player;
+        if (!e.level || !e.level.player) return; // sécurité
+        const p = e.level.player;
 
         const dist = Math.hypot(e.x - p.x, e.y - p.y);
         if (dist < e.radius + 10) {

@@ -9,17 +9,8 @@ import Level from './class/Level.js';
 
 window.onload = init;
 
-const enemies = [];
-const projectiles = [];
-
-AvoidOtherEnemies.enemies = enemies;
-PlayerAttack.enemies = enemies;
-Projectile.projectiles = projectiles;
-
 let canvas, ctx;
 let lastTime = 0;
-let backgroundImage = new Image();
-backgroundImage.src = './assets/background_map/map1_background.png';
 let player;
 let viewRenderer;
 const keys = {};
@@ -32,18 +23,27 @@ function init() {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    player = new Player(canvas.width / 2, canvas.height / 2);
+    // Création du Level
+    const map1 = new Level('Forest', './assets/background_map/map1_background.png');
 
-    enemies.push(new PointBlack(200, 100, player));
-    enemies.push(new PointBlack(-150, 80, player));
+    // Création du joueur
+    player = new Player(canvas.width / 2, canvas.height / 2, map1);
+    map1.setPlayer(player);
 
+    // Spawn des ennemis
+    const e1 = new PointBlack(200, 100, map1);
+    const e2 = new PointBlack(-150, 80, map1);
+    map1.addEnemy(e1);
+    map1.addEnemy(e2);
+    // ViewRenderer avec les maps
     viewRenderer = new ViewRenderer(ctx, {
-        map1: new Level('Forest','./assets/background_map/map1_background.png'),
+        map1,
         map2: new Level('Wasteworld', './assets/background_map/map2_background.png'),
         map3: new Level('Snow', './assets/background_map/map3_background.png'),
         map4: new Level('Complex', './assets/background_map/map4_background.png')
     }, player);
 
+    // Input
     window.addEventListener('keydown', (e) => keys[e.key] = true);
     window.addEventListener('keyup', (e) => keys[e.key] = false);
 
@@ -60,14 +60,13 @@ function init() {
         }
     });
 
-    animationLoop(0);
+    animationLoop(0, map1);
 }
 
 let pastKeys = {};
 
 function playerMovement() {
     let dx = 0, dy = 0;
-
     if (keys['ArrowUp'] || keys['z'] || keys['w']) dy -= 1;
     if (keys['ArrowDown'] || keys['s']) dy += 1;
     if (keys['ArrowLeft'] || keys['q'] || keys['a']) dx -= 1;
@@ -76,52 +75,57 @@ function playerMovement() {
     player.move(dx, dy);
 
     if (JSON.stringify(keys) !== JSON.stringify(pastKeys)) {
-        // console.log(keys); // debug keys
         pastKeys = JSON.parse(JSON.stringify(keys));
     }
 }
 
-function update(dt) {
-    // Mouvements et comportements
+function update(dt, level) {
     playerMovement();
-    for (const p of projectiles) p.update(dt);
-    for (const e of enemies) e.update(dt);
+
+    // Update toutes les entités via level
+    for (const p of level.projectiles) p.update(dt, level);
+    for (const e of level.enemies) e.update(dt, level);
+    for (const xp of level.xpEntities) xp.update?.(dt, level); // si besoin
     player.update(dt);
 
-    // Cleanup in-place
-    EntityManager.cleanupInPlace(enemies);
-    EntityManager.cleanupInPlace(projectiles);
+    // Cleanup
+    EntityManager.cleanupInPlace(level.enemies);
+    EntityManager.cleanupInPlace(level.projectiles);
+    EntityManager.cleanupInPlace(level.xpEntities);
 }
 
-function render() {
+function render(level) {
+    const player = level.player;
     const cameraX = player.x - canvas.width / 2;
     const cameraY = player.y - canvas.height / 2;
 
-    const bgW = backgroundImage.width;
-    const bgH = backgroundImage.height;
+    const bg = level.backgroundImage;
+    const bgW = bg.width;
+    const bgH = bg.height;
 
     const startX = - (cameraX % bgW);
     const startY = - (cameraY % bgH);
 
     for (let x = startX - bgW; x < canvas.width; x += bgW) {
         for (let y = startY - bgH; y < canvas.height; y += bgH) {
-            ctx.drawImage(backgroundImage, x, y);
+            ctx.drawImage(bg, x, y);
         }
     }
 
+    // Render toutes les entités
     player.render(ctx, canvas);
-    for (const p of projectiles) p.render(ctx, canvas, player);
-    for (const e of enemies) e.render(ctx, canvas);
+    for (const xp of level.xpEntities) xp.render(ctx, canvas, player);
+    for (const p of level.projectiles) p.render(ctx, canvas, player);
+    for (const e of level.enemies) e.render(ctx, canvas);
 }
 
-function animationLoop(timestamp) {
+function animationLoop(timestamp, level) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     const dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
-    update(dt);
-    render();
+    update(dt, level);
+    render(level);
 
-    requestAnimationFrame(animationLoop);
+    requestAnimationFrame(ts => animationLoop(ts, level));
 }

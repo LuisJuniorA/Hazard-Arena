@@ -1,25 +1,27 @@
 import PlayerAttack from "../behaviors/PlayerAttack.js";
 
 export default class Player {
-    constructor(x, y) {
+    constructor(x, y, level) {
         this.x = x;
         this.y = y;
         this.speed = 5;
+        this.levelRef = level; // référence au level courant
 
-        this.hp = 300; // corresponds to 3 bars of health, each bar representing 100 hp
+        this.hp = 300; // 3 barres
         this.healingRate = 0;
 
         this.attackDamage = 0.5;
-        this.attackRange = 50; // in pixels
-        this.attackSpeed = 1; // attacks per second
-        this.baseProjectileNumber = 1; // number of projectiles per attack
+        this.attackRange = 50;
+        this.attackSpeed = 1; // attaques par seconde
+        this.baseProjectileNumber = 1;
 
+        this.maxLevel = 100;
         this.level = 0;
-        this.experience = 0; // out of 100
-        this.experienceRate = 0.5; // experience multiplier
-        this.experienceGrabRange = 30; // in pixels
-        this.behaviors = []
+        this.experience = 0;
+        this.experienceRate = 0.5;
+        this.experienceGrabRange = 30;
 
+        this.behaviors = [];
         this.addBehavior(new PlayerAttack());
     }
 
@@ -30,42 +32,41 @@ export default class Player {
 
     takeDamage(amount) {
         this.hp -= amount;
-        if (this.hp < 0) {
-            this.hp = 0;
-        }
-        //todo add death handling
+        if (this.hp < 0) this.hp = 0;
+        // todo: gérer la mort
     }
 
     heal() {
         if (this.healingRate > 0) {
             this.hp += this.healingRate;
-            if (this.hp > 300) {
-                this.hp = 300;
-            }
-        }//todo maybe add a shield system for overhealing
-    }
-
-    canGrabXp(xpos, ypos) {
-        if (Math.hypot(this.x - xpos, this.y - ypos) < this.experienceGrabRange) {
-            return true;
+            if (this.hp > 300) this.hp = 300;
         }
-        return false;
     }
 
-    grabXp(amount) {
-        this.experience += amount * this.experienceRate;
-        if (this.experience >= 100) {
+    canGrabXp(x, y) {
+        return Math.hypot(this.x - x, this.y - y) < this.experienceGrabRange;
+    }
+
+    grabXp(xpAmount) {
+        this.experience += xpAmount * this.experienceRate;
+
+        while (this.experience >= 100) {
             this.experience -= 100;
             this.levelUp();
         }
     }
 
     levelUp() {
+        if (this.level >= this.maxLevel) {
+            this.experience = 0; 
+            return;
+        }
+        
         this.level++;
-        //todo add level up benefits
+        console.log(`Level up ! Nouveau niveau : ${this.level}`);        // todo: effets du level up (vitesse, dégâts, etc.)
     }
 
-    upgrade(type) {//todo change to the good format
+    upgrade(type) {
         switch (type) {
             case 'attackDamage':
                 this.attackDamage += 0.5;
@@ -73,6 +74,11 @@ export default class Player {
             default:
                 break;
         }
+    }
+
+    update(dt) {
+        // update comportements
+        for (const b of this.behaviors) b.update(dt, this.levelRef);
     }
 
     render(ctx, canvas) {
@@ -83,10 +89,6 @@ export default class Player {
             20,
             20
         );
-    }
-
-    update(dt){
-        for (const b of this.behaviors) b.update(dt);
     }
 
     addBehavior(behavior) {
