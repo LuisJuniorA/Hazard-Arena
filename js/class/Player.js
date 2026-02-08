@@ -10,7 +10,7 @@ export default class Player {
         this.hp = 300; // 3 barres
         this.healingRate = 0;
 
-        this.attackDamage = 0.5;
+        this.attackDamage = 1;
         this.attackRange = 50;
         this.attackSpeed = 1; // attaques par seconde
         this.baseProjectileNumber = 1;

@@ -1,6 +1,7 @@
 import EntityManager from '../utils/EntityManager.js';
 import EnemySpawner from '../behaviors/EnemySpawner.js'
 import PointBlack from './enemy/PointBlack.js';
+import PointGrey from './enemy/PointGrey.js';
 import Player from './Player.js';
 
 export default class Level {
@@ -21,6 +22,16 @@ export default class Level {
             PointBlack,
             { duration: 900, spawnInterval: 1, spawnIncrementInterval: 5 }
         ));
+
+        setTimeout(() => {
+            this.behaviors.push(new EnemySpawner(
+                this.enemies,
+                this.player,
+                PointGrey,
+                { duration: 600, spawnInterval: 1, spawnIncrementInterval: 5 }
+            ))
+        }, 5 * 60 * 1000);
+
     }
 
     // -------- Player --------
