@@ -1,36 +1,56 @@
-export default class DealDamage {
+import Behavior from '../entities/base/Behavior.js';
+
+export default class DealDamage extends Behavior {
     /**
-     * @param {Array} targets - tableau des ennemis
-     * @param {number} amount - dégâts à infliger
-     * @param {Object} source - l'objet infligeant les dégâts (ex: projectile) {x, y, radius, dead}
-     * @param {Function} condition - optionnel, fonction (source, target) => boolean
+     * @param {number} amount
+     * @param {Object} options
      */
-    constructor(targets, amount, source, condition = null) {
-        this.targets = targets;
+    constructor(amount, options = {}) {
+        super();
+
         this.amount = amount;
-        this.source = source; // le projectile
-        this.condition = condition;
+
+        this.once = options.once ?? true;       // projectile
+        this.interval = options.interval ?? 0;  // DOT
+        this.filter = options.filter ?? null;   // (source, target) => boolean
+        this.onHit = options.onHit ?? null;     // callback
+
+        this.timer = 0;
+        this.hitTargets = new Set(); // evite multi-hit non voulu
     }
 
-    update() {
-        const src = this.source;
+    update(dt) {
+        const src = this.entity;
         if (!src || src.dead) return;
 
-        for (const t of this.targets) {
-            if (t.dead) continue;
-            if (this.condition && !this.condition(src, t)) continue;
+        this.timer += dt;
+        if (this.interval > 0 && this.timer < this.interval) return;
+        this.timer = 0;
 
-            const dx = t.x - src.x;
-            const dy = t.y - src.y;
-            const dist = Math.hypot(dx, dy);
+        for (const target of src.level.enemies) {
+            if (target.dead) continue;
 
-            const minDist = (src.radius ?? 4) + (t.radius ?? 8);
+            if (this.filter && !this.filter(src, target)) continue;
+            if (this.once && this.hitTargets.has(target)) continue;
 
-            if (dist < minDist) {
-                t.takeDamage(this.amount);
-                src.dead = true; // le projectile disparaît
-                break; // stop après la première cible touchée
+            if (this.overlap(src, target)) {
+                target.takeDamage(this.amount);
+                this.hitTargets.add(target);
+
+                if (this.onHit) this.onHit(src, target);
+
+                if (this.once) {
+                    src.dead = true;
+                    return;
+                }
             }
         }
+    }
+
+    overlap(a, b) {
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        return dist < (a.radius ?? 0) + (b.radius ?? 0);
     }
 }
