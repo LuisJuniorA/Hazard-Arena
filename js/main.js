@@ -1,79 +1,102 @@
-import PointBlack from './entities/enemies/PointBlack.js';
 import Level from './entities/Level.js';
 import ViewRenderer from './methods/ViewRenderer.js';
 
 window.onload = init;
 
+// =====================================================
+// GLOBALS
+// =====================================================
 let canvas, ctx;
 let lastTime = 0;
-let player;
 let viewRenderer;
-let currentLevel;
 const keys = {};
 
+// =====================================================
+// INIT
+// =====================================================
 function init() {
+    // -------- Canvas --------
     canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
     ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // Création du Level
-    const map1 = new Level('Forest', './assets/background_map/map1_background.png');
-    player = map1.player;
-
-    currentLevel = map1;
-
-    // ViewRenderer avec toutes les maps
-    viewRenderer = new ViewRenderer(ctx, {
-        map1,
+    // -------- Levels --------
+    const levels = {
+        map1: new Level('Forest', './assets/background_map/map1_background.png'),
         map2: new Level('Wasteworld', './assets/background_map/map2_background.png'),
         map3: new Level('Snow', './assets/background_map/map3_background.png'),
         map4: new Level('Complex', './assets/background_map/map4_background.png')
-    }, player);
+    };
 
-    // Input
+    // -------- View Renderer --------
+    viewRenderer = new ViewRenderer(ctx, levels);
+
+    // -------- Input clavier --------
     window.addEventListener('keydown', e => keys[e.key] = true);
     window.addEventListener('keyup', e => keys[e.key] = false);
 
-    window.addEventListener('click', e => {
-        if (viewRenderer.currentView === 'menu') {
-            const clickedButton = viewRenderer.clickingButtonHandler(e.clientX, e.clientY);
-            if (clickedButton) viewRenderer.loadMap(clickedButton.map);
-        }
-    });
-
+    // -------- Input souris (menu) --------
     window.addEventListener('mousemove', e => {
-        if (viewRenderer.currentView === 'menu') {
-            viewRenderer.hoveringButtonHandler(e.clientX, e.clientY);
-        }
+        viewRenderer.handleMouseMove(e.clientX, e.clientY);
     });
 
-    requestAnimationFrame(animationLoop);
+    window.addEventListener('click', e => {
+        viewRenderer.handleClick(e.clientX, e.clientY);
+    });
+
+    // -------- Resize --------
+    window.addEventListener('resize', onResize);
+
+    requestAnimationFrame(loop);
 }
 
-function handlePlayerMovement() {
-    let dx = 0, dy = 0;
+// =====================================================
+// RESIZE
+// =====================================================
+function onResize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+// =====================================================
+// PLAYER INPUT
+// =====================================================
+function handlePlayerMovement(level) {
+    if (!level || !level.player) return;
+
+    let dx = 0;
+    let dy = 0;
+
     if (keys['ArrowUp'] || keys['z'] || keys['w']) dy -= 1;
     if (keys['ArrowDown'] || keys['s']) dy += 1;
     if (keys['ArrowLeft'] || keys['q'] || keys['a']) dx -= 1;
     if (keys['ArrowRight'] || keys['d']) dx += 1;
 
-    player.move(dx, dy);
+    level.player.move(dx, dy);
 }
 
-function animationLoop(timestamp) {
+// =====================================================
+// MAIN LOOP
+// =====================================================
+function loop(timestamp) {
     const dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    handlePlayerMovement();
+    // -------- Update gameplay si pas dans le menu --------
+    if (viewRenderer.currentView !== 'menu') {
+        const level = viewRenderer.levels[viewRenderer.currentView];
+        handlePlayerMovement(level);
+        level.update(dt);
+    }
 
-    // Tout passe par le level maintenant
-    currentLevel.update(dt);
-    currentLevel.render(ctx, canvas);
+    // -------- Render (menu OU level) --------
+    viewRenderer.render();
 
-    requestAnimationFrame(animationLoop);
+    requestAnimationFrame(loop);
 }
