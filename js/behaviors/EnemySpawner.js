@@ -1,65 +1,68 @@
-// EnemySpawnerBehavior.js
-export default class EnemySpawner {
+import Behavior from '../entities/base/Behavior.js';
+
+export default class EnemySpawner extends Behavior {
     /**
-     * @param {Array} enemies - tableau d'ennemis du level
-     * @param {Player} player - référence du joueur
      * @param {Function} enemyClass - classe d'ennemi à instancier
      * @param {Object} options - configuration
      */
-    constructor(enemies, player, enemyClass, options = {}) {
-        this.enemies = enemies;
-        this.player = player;
+    constructor(enemyClass, options = {}) {
+        super();
+
         this.enemyClass = enemyClass;
 
         // Config
         this.duration = options.duration ?? 15 * 60; // secondes
+        this.spawnInterval = options.spawnInterval ?? 1; // ennemis/sec initial
+        this.spawnIncrementInterval = options.spawnIncrementInterval ?? 5;
+
+        // State
         this.timeElapsed = 0;
-
-        this.spawnInterval = options.spawnInterval ?? 1; // base spawn/sec
         this.spawnTimer = 0;
-
-        this.spawnIncrementInterval = options.spawnIncrementInterval ?? 5; // chaque X sec
         this.lastIncrement = 0;
-
-        this.enemiesPerSpawn = 0; // start 1/s 
+        this.enemiesPerSpawn = 1;
     }
 
-    update(dt, level) {
+    update(dt) {
+        const level = this.entity;
+        const player = level.player;
+        if (!level || !player) return;
+
         this.timeElapsed += dt;
         this.spawnTimer += dt;
 
-        // Augmente la cadence tous les spawnIncrementInterval
+        // augmente la pression
         if (this.timeElapsed - this.lastIncrement >= this.spawnIncrementInterval) {
-            this.enemiesPerSpawn += 1;
+            this.enemiesPerSpawn++;
             this.lastIncrement = this.timeElapsed;
         }
 
-        // Spawn si timer atteint
-        if (this.spawnTimer >= 1 / this.enemiesPerSpawn) {
-            this.spawnEnemies(level);
+        // spawn
+        if (this.spawnTimer >= 1 / this.spawnInterval) {
+            this.spawn(level, player);
             this.spawnTimer = 0;
         }
 
-        // Stop après durée de map
+        // fin du spawner
         if (this.timeElapsed >= this.duration) {
-            this.spawnTimer = Infinity;
+            this.enabled = false;
         }
     }
 
-    spawnEnemies(level) {
+    spawn(level, player) {
         for (let i = 0; i < this.enemiesPerSpawn; i++) {
-            const pos = this.getSpawnPosition(level);
+            const pos = this.getSpawnPosition(player);
             const enemy = new this.enemyClass(pos.x, pos.y, level);
             level.addEnemy(enemy);
         }
     }
 
-    getSpawnPosition() {
-        // Spawn aléatoire autour du joueur, hors écran
-        const distance = 400 + Math.random() * 200; // spawn à 400-600 px
+    getSpawnPosition(player) {
+        const distance = 400 + Math.random() * 200;
         const angle = Math.random() * Math.PI * 2;
-        const x = this.player.x + Math.cos(angle) * distance;
-        const y = this.player.y + Math.sin(angle) * distance;
-        return { x, y };
+
+        return {
+            x: player.x + Math.cos(angle) * distance,
+            y: player.y + Math.sin(angle) * distance
+        };
     }
 }

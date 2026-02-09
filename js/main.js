@@ -1,5 +1,5 @@
-import PointBlack from './class/enemy/PointBlack.js';
-import Level from './class/Level.js';
+import PointBlack from './entities/enemies/PointBlack.js';
+import Level from './entities/Level.js';
 import ViewRenderer from './methods/ViewRenderer.js';
 
 window.onload = init;

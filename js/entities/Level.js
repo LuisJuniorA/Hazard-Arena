@@ -1,8 +1,8 @@
 import EntityManager from '../utils/EntityManager.js';
 import EnemySpawner from '../behaviors/EnemySpawner.js'
-import PointBlack from './enemy/PointBlack.js';
-import PointGrey from './enemy/PointGrey.js';
-import Player from './Player.js';
+import PointBlack from './enemies/PointBlack.js';
+import PointGrey from './enemies/PointGrey.js';
+import Player from './player/Player.js';
 
 export default class Level {
     constructor(name, backgroundSrc) {
@@ -16,17 +16,13 @@ export default class Level {
         this.xpEntities = [];
 
         this.behaviors = [];
-        this.behaviors.push(new EnemySpawner(
-            this.enemies,
-            this.player,
+        this.addBehavior(new EnemySpawner(
             PointBlack,
             { duration: 900, spawnInterval: 1, spawnIncrementInterval: 5 }
         ));
 
         setTimeout(() => {
-            this.behaviors.push(new EnemySpawner(
-                this.enemies,
-                this.player,
+            this.addBehavior(new EnemySpawner(
                 PointGrey,
                 { duration: 600, spawnInterval: 1, spawnIncrementInterval: 5 }
             ))
@@ -57,14 +53,13 @@ export default class Level {
     // -------- Update --------
     update(dt) {
         // 1: behaviors (spawner, hazards, etc.)
-        for (const b of this.behaviors) b.update?.(dt, this);
+        for (const b of this.behaviors) b.update?.(dt);
 
         // 2: update entités
         this.player?.update(dt, this);
-
-        for (const e of this.enemies) e.update(dt, this);
-        for (const p of this.projectiles) p.update(dt, this);
-        for (const xp of this.xpEntities) xp.update?.(dt, this);
+        for (const e of this.enemies) e.update(dt);
+        for (const p of this.projectiles) p.update(dt);
+        for (const xp of this.xpEntities) xp.update(dt);
 
         // 3: cleanup entités mortes
         EntityManager.cleanupInPlace(this.enemies);
@@ -74,6 +69,7 @@ export default class Level {
 
     // -------- Render --------
     render(ctx, canvas) {
+        ctx.save();
         if (!this.player) return;
 
         const cameraX = this.player.x - canvas.width / 2;
@@ -99,5 +95,11 @@ export default class Level {
 
         // Draw player last (on top)
         this.player.render(ctx, canvas);
+        ctx.restore();
+    }
+
+    addBehavior(behavior) {
+        behavior.onAttach(this, this.level);
+        this.behaviors.push(behavior);
     }
 }
