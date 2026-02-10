@@ -3,6 +3,7 @@ import EnemySpawner from '../behaviors/EnemySpawner.js'
 import PointBlack from './enemies/PointBlack.js';
 import PointGrey from './enemies/PointGrey.js';
 import Player from './player/Player.js';
+import BigDot from './enemies/BigDot.js';
 
 export default class Level {
     constructor(name, backgroundSrc) {
@@ -23,7 +24,7 @@ export default class Level {
 
         setTimeout(() => {
             this.addBehavior(new EnemySpawner(
-                PointGrey,
+                BigDot,
                 { duration: 600, spawnInterval: 1, spawnIncrementInterval: 5 }
             ))
         }, 5 * 60 * 1000);

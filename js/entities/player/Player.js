@@ -17,6 +17,7 @@ export default class Player extends Entity {
         this.levelNumber = 0;
         this.experienceGrabRange = 10;
 
+        this.upgrades = [];
         this.behaviors = [];
         this.addBehavior(new PlayerAttack());
     }
@@ -29,6 +30,21 @@ export default class Player extends Entity {
             this.levelUp();
         }
     }
+
+    addUpgrade(upgrade) {
+        const existing = this.upgrades.find(u => u.id === upgrade.id);
+
+        if (existing) {
+            if (!existing.canUpgrade(this)) return false;
+            existing.apply(this);
+        } else {
+            upgrade.apply(this);
+            this.upgrades.push(upgrade);
+        }
+
+        return true;
+    }
+
 
     move(dx, dy) {
         this.x += dx * this.speed * Math.SQRT1_2;
