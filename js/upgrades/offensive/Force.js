@@ -12,7 +12,7 @@ export default class Force extends Upgrade {
         super.apply(player);
 
         const bonus = [0.05, 0.10, 0.15][this.level - 1];
-        player.attackDamage *= (1 + bonus);
+        player.attackDamage = player.baseDamage * (1 + bonus);
     }
 
     getDescription() {

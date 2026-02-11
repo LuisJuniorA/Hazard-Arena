@@ -15,7 +15,7 @@ export default class Vitesse extends Upgrade {
 
         const bonus = Vitesse.bonus[this.level]; // bonus du PROCHAIN niveau
 
-        player.speed *= (1 + bonus);
+        player.speed = player.baseSpeed * (1 + bonus);
 
         this.level++;
     }

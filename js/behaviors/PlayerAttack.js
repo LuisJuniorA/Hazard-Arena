@@ -38,7 +38,7 @@ export default class PlayerAttack extends Behavior {
 
         if (this.currentBurst >= this.burstCount) {
             this.currentBurst = 0;
-            this.cooldown = player.attackSpeed;
+            this.cooldown = 1 / player.attackSpeed;
         }
     }
 
