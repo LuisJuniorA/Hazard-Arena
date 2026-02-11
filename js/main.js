@@ -1,7 +1,9 @@
 import Level from './entities/Level.js';
 import ViewRenderer from './methods/ViewRenderer.js';
+import soundManager from './common/soundInstance.js';
+import AssetLoader from './common/AssetLoader.js';
 
-window.onload = init;
+window.onload = () => init();;
 
 // =====================================================
 // GLOBALS
@@ -14,7 +16,7 @@ const keys = {};
 // =====================================================
 // INIT
 // =====================================================
-function init() {
+async function init() {
     // -------- Canvas --------
     canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth;
@@ -23,6 +25,12 @@ function init() {
     ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
+
+    // -------- Asset Loading --------
+    const loader = new AssetLoader(soundManager);
+    console.log("Loading assets...");
+    await loader.loadAll();
+    console.log("Assets loaded");
 
     // -------- Levels --------
     const levels = {
@@ -100,3 +108,8 @@ function loop(timestamp) {
 
     requestAnimationFrame(loop);
 }
+
+
+window.addEventListener("mousemove", async () => {
+    await audioContext.resume();
+}, { once: true });

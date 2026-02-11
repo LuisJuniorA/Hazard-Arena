@@ -1,3 +1,4 @@
+import soundManager from '../common/soundInstance.js';
 export default class ViewRenderer {
     constructor(ctx, levels) {
         this.ctx = ctx;
@@ -43,11 +44,17 @@ export default class ViewRenderer {
             console.error(`Level "${mapName}" not found`);
             return;
         }
+        soundManager.clickLoadMap();
+
+        setTimeout(() => {
+            soundManager.playMusic(mapName);
+        }, soundManager.sounds.clickLoadMap.audioLength * 1000);
         this.currentView = mapName;
     }
 
     loadMenu() {
         this.currentView = 'menu';
+        soundManager.playMusic('mainMenu');
     }
 
     // =====================================================
