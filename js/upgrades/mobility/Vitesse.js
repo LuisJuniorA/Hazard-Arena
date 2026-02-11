@@ -1,6 +1,8 @@
 import Upgrade from '../../entities/base/Upgrade.js';
 
-export default class Force extends Upgrade {
+export default class Vitesse extends Upgrade {
+    static bonus = [0.05, 0.10, 0.15];
+
     constructor() {
         super({
             id: 'vitesse',
@@ -9,19 +11,21 @@ export default class Force extends Upgrade {
     }
 
     apply(player) {
-        super.apply(player);
+        if (this.level >= this.maxLevel) return;
 
-        const bonus = [0.05, 0.10, 0.15][this.level - 1];
+        const bonus = Vitesse.bonus[this.level]; // bonus du PROCHAIN niveau
+
         player.speed *= (1 + bonus);
+
+        this.level++;
     }
 
     getDescription() {
-        const nextLevel = this.level + 1;
-
-        if (nextLevel <= 3) {
-            return `Augmente la vitesse de ${nextLevel * 5}%`;
+        console.log(this.level)
+        if (this.level < this.maxLevel) {
+            return `Augmente la vitesse de ${Vitesse.bonus[this.level] * 100}%`;
         }
 
-        return `Fusion : TODO`;
+        return `Niveau max atteint`;
     }
 }

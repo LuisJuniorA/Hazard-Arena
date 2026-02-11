@@ -27,18 +27,22 @@ export default class UpgradeFacade {
 
     open() {
         const rolled = this.roll(3);
+        if (!rolled.length) return;
 
         this.buttons = rolled.map((UpgradeClass, i) => {
-            const upgradeInstance = new UpgradeClass();
+            const id = UpgradeClass.prototype.id || new UpgradeClass().id;
+            const existing = this.player.upgrades.find(u => u.id === id);
+            const upgradeInstance = existing ?? new UpgradeClass();
             return new UpgradeButton(
                 upgradeInstance,
-                i,           // index
-                rolled.length, // total
+                i,
+                rolled.length,
                 150,
                 250,
                 this
             );
         });
+
 
 
         this.active = true;

@@ -7,10 +7,13 @@ export default class Player extends Entity {
         super(x, y, 10); // radius 10
         this.levelRef = level;
         this.hp = 300;
-        this.speed = 5;
+        this.baseSpeed = 5;
+        this.baseDamage = 1;
+        this.baseAttackSpeed = 1;
 
-        this.attackDamage = 1;
-        this.attackSpeed = 1;
+        this.speed = this.baseSpeed;
+        this.attackDamage = this.baseDamage;
+        this.attackSpeed = this.baseAttackSpeed;
         this.baseProjectileNumber = 1;
 
         this.level = level;
@@ -71,5 +74,6 @@ export default class Player extends Entity {
         ctx.fillStyle = 'red';
         ctx.fillRect(canvas.width / 2 - 10, canvas.height / 2 - 10, 20, 20);
         ctx.restore();
+        console.log(this.speed);
     }
 }

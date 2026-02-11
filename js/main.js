@@ -43,17 +43,13 @@ function init() {
     // -------- Input souris (menu) --------
     window.addEventListener('mousemove', e => {
         viewRenderer.handleMouseMove(e.clientX, e.clientY);
-        if (!level?.upgradeFacade) return;
-        level.upgradeFacade?.buttons.forEach(btn =>
-            btn.isHovered(e.clientX, e.clientY)
-        );
     });
 
     window.addEventListener('click', e => {
         viewRenderer.handleClick(e.clientX, e.clientY);
         if (!level?.upgradeFacade) return;
         level.upgradeFacade?.buttons.forEach(btn =>
-            console.log("test")
+            btn.isClicked(e.clientX, e.clientY)
         );
     });
 

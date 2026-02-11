@@ -9,6 +9,7 @@ export default class UpgradeButton {
         this.height = height;
         this.facade = facade;
         this.hover = false;
+        this.clicked = false;
 
         this.behaviors = [];
         this.addBehavior(new Clickable(() => {
@@ -45,31 +46,111 @@ export default class UpgradeButton {
 
     render(ctx, canvas) {
         this.pos = this.getPosition(canvas);
-        ctx.save();
-        ctx.fillStyle = this.hover ? '#ccc' : '#eee';
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-        ctx.fillRect(this.pos.x, this.pos.y, this.width, this.height);
-        ctx.strokeRect(this.pos.x, this.pos.y, this.width, this.height);
+        const { x, y } = this.pos;
+        const w = this.width;
+        const h = this.height;
+        const radius = 16;
 
-        ctx.fillStyle = '#000';
-        ctx.font = 'bold 16px sans-serif';
-        ctx.textAlign = 'center';
+        ctx.save();
+
+        // ===============================
+        // SHADOW
+        // ===============================
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetY = 8;
+
+        // ===============================
+        // BACKGROUND (gradient)
+        // ===============================
+        const gradient = ctx.createLinearGradient(x, y, x, y + h);
+        gradient.addColorStop(0, this.hover ? "#2c3e50" : "#1e272e");
+        gradient.addColorStop(1, "#0f1418");
+
+        this.#roundRect(ctx, x, y, w, h, radius);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+        // ===============================
+        // BORDER
+        // ===============================
+        ctx.lineWidth = this.hover ? 4 : 2;
+        ctx.strokeStyle = this.hover ? "#00d8ff" : "#555";
+        this.#roundRect(ctx, x, y, w, h, radius);
+        ctx.stroke();
+
+        // ===============================
+        // TITLE AREA
+        // ===============================
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 18px sans-serif";
+        ctx.textAlign = "center";
+
+        const levelToShow = this.upgrade.level + 1 || 1;
+
         ctx.fillText(
-            this.upgrade.name + (this.upgrade.level ? ` Lv${this.upgrade.level}` : ''),
-            this.pos.x + this.width / 2,
-            this.pos.y + 30
+            `${this.upgrade.name}`,
+            x + w / 2,
+            y + 35
         );
 
-        ctx.font = '14px sans-serif';
-        ctx.textAlign = 'center';
-        const lines = this.wrapText(ctx, this.upgrade.getDescription(), this.width - 20);
+        // ===============================
+        // LEVEL BADGE
+        // ===============================
+        ctx.font = "14px sans-serif";
+        ctx.fillStyle = "#00d8ff";
+        ctx.fillText(
+            `Lvl ${levelToShow}`,
+            x + w / 2,
+            y + 60
+        );
+
+        // ===============================
+        // SEPARATOR LINE
+        // ===============================
+        ctx.strokeStyle = "#444";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x + 20, y + 80);
+        ctx.lineTo(x + w - 20, y + 80);
+        ctx.stroke();
+
+        // ===============================
+        // DESCRIPTION
+        // ===============================
+        ctx.fillStyle = "#dfe6e9";
+        ctx.font = "14px sans-serif";
+
+        const lines = this.wrapText(ctx, this.upgrade.getDescription(), w - 40);
+
         lines.forEach((line, index) => {
-            ctx.fillText(line, this.pos.x + this.width / 2, this.pos.y + 60 + index * 18);
+            ctx.fillText(
+                line,
+                x + w / 2,
+                y + 110 + index * 20
+            );
         });
 
         ctx.restore();
     }
+
+    #roundRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+    }
+
+
 
     wrapText(ctx, text, maxWidth) {
         const words = text.split(' ');
@@ -97,6 +178,12 @@ export default class UpgradeButton {
             mouseY >= this.pos.y &&
             mouseY <= this.pos.y + this.height
         );
+    }
+
+    isClicked(mouseX, mouseY) {
+        if (this.isHovered(mouseX, mouseY)) {
+            this.clicked = true;
+        }
     }
 
 
