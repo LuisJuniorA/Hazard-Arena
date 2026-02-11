@@ -1,12 +1,13 @@
 import Force from "../upgrades/offensive/Force.js"
 import Vitesse from "../upgrades/mobility/Vitesse.js"
+import AttackSpeed from "../upgrades/offensive/AttackSpeed.js";
 import UpgradeRoller from "../utils/UpgradeRoller.js"
 import UpgradeButton from "../methods/UpgradeButton.js";
 
 export default class UpgradeFacade {
     constructor(player) {
         this.player = player;
-        this.allUpgrades = [Force, Vitesse];
+        this.allUpgrades = [Force, Vitesse, AttackSpeed];
 
         this.active = false;
         this.buttons = [];
