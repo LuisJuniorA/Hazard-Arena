@@ -3,12 +3,14 @@ import EnemySpawner from '../behaviors/EnemySpawner.js'
 import PointBlack from './enemies/PointBlack.js';
 import PointGrey from './enemies/PointGrey.js';
 import Player from './player/Player.js';
+import BigDot from './enemies/BigDot.js';
 
 export default class Level {
     constructor(name, backgroundSrc) {
         this.name = name;
         this.backgroundImage = new Image();
         this.backgroundImage.src = backgroundSrc;
+        this.upgradeFacade = null;
 
         this.player = new Player(canvas.width / 2, canvas.height / 2, this)
         this.enemies = [];
@@ -52,6 +54,12 @@ export default class Level {
 
     // -------- Update --------
     update(dt) {
+        // Si l'upgrade screen est actif, update seulement les boutons
+        if (this.upgradeFacade?.active) {
+            this.upgradeFacade.update(dt);
+            return; // stop update normal du joueur / ennemis
+        }
+
         // 1: behaviors (spawner, hazards, etc.)
         for (const b of this.behaviors) b.update?.(dt);
 
@@ -67,36 +75,34 @@ export default class Level {
         EntityManager.cleanupInPlace(this.xpEntities);
     }
 
-    // -------- Render --------
     render(ctx, canvas) {
+        // draw background
         ctx.save();
-        if (!this.player) return;
-
-        const cameraX = this.player.x - canvas.width / 2;
-        const cameraY = this.player.y - canvas.height / 2;
-
+        const cameraX = this.player?.x - canvas.width / 2 || 0;
+        const cameraY = this.player?.y - canvas.height / 2 || 0;
         const bg = this.backgroundImage;
-        const bgW = bg.width;
-        const bgH = bg.height;
-        const startX = -(cameraX % bgW);
-        const startY = -(cameraY % bgH);
-
-        // Draw background
+        const bgW = bg.width, bgH = bg.height;
+        const startX = -(cameraX % bgW), startY = -(cameraY % bgH);
         for (let x = startX - bgW; x < canvas.width; x += bgW) {
             for (let y = startY - bgH; y < canvas.height; y += bgH) {
                 ctx.drawImage(bg, x, y);
             }
         }
 
-        // Draw entities
-        for (const e of this.enemies) e.render(ctx, canvas);
-        for (const p of this.projectiles) p.render(ctx, canvas, this.player);
-        for (const xp of this.xpEntities) xp.render?.(ctx, canvas, this.player);
+        // draw entities si upgrade pas actif
+        if (!this.upgradeFacade?.active) {
+            for (const e of this.enemies) e.render(ctx, canvas);
+            for (const p of this.projectiles) p.render(ctx, canvas, this.player);
+            for (const xp of this.xpEntities) xp.render?.(ctx, canvas, this.player);
+            this.player?.render(ctx, canvas);
+        }
 
-        // Draw player last (on top)
-        this.player.render(ctx, canvas);
+        // draw upgrade buttons si actif
+        this.upgradeFacade?.render(ctx, canvas);
+
         ctx.restore();
     }
+
 
     addBehavior(behavior) {
         behavior.onAttach(this, this.level);
