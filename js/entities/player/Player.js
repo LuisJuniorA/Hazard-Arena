@@ -1,5 +1,6 @@
 import Entity from '../base/Entity.js';
 import PlayerAttack from '../../behaviors/PlayerAttack.js';
+import UpgradeFacade from '../../facades/UpgradeFacade.js';
 
 export default class Player extends Entity {
     constructor(x, y, level) {
@@ -15,6 +16,7 @@ export default class Player extends Entity {
         this.level = level;
         this.experience = 0;
         this.levelNumber = 0;
+        this.experienceRate = 1;
         this.experienceGrabRange = 10;
 
         this.upgrades = [];
@@ -24,12 +26,20 @@ export default class Player extends Entity {
 
     grabXp(xpAmount) {
         this.experience += xpAmount * this.experienceRate;
-
         while (this.experience >= 100) {
             this.experience -= 100;
             this.levelUp();
         }
     }
+
+    levelUp() {
+        this.levelNumber++;
+        if (!this.levelRef.upgradeFacade) {
+            this.levelRef.upgradeFacade = new UpgradeFacade(this);
+        }
+        this.levelRef.upgradeFacade.open(); // active l'écran d'upgrade
+    }
+
 
     addUpgrade(upgrade) {
         const existing = this.upgrades.find(u => u.id === upgrade.id);

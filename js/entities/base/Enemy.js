@@ -1,10 +1,16 @@
 import Character from './Character.js';
 import XP from '../player/XP.js';
+import ChasePlayer from '../../behaviors/ChasePlayer.js'
+import ContactDamage from '../../behaviors/ContactDamage.js'
+import AvoidOtherEnemies from '../../behaviors/AvoidOtherEnemies.js'
 
 export default class Enemy extends Character {
     constructor(x, y, level, config = {}) {
         super(x, y, level, config);
         this.xpAmount = config.xpAmount ?? 1;
+        this.addBehavior(new ChasePlayer());
+        this.addBehavior(new ContactDamage(config.damage ?? 1));
+        this.addBehavior(new AvoidOtherEnemies());
     }
 
     takeDamage(amount) {

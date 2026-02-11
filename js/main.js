@@ -10,6 +10,7 @@ let canvas, ctx;
 let lastTime = 0;
 let viewRenderer;
 const keys = {};
+let level;
 
 // =====================================================
 // INIT
@@ -42,10 +43,18 @@ function init() {
     // -------- Input souris (menu) --------
     window.addEventListener('mousemove', e => {
         viewRenderer.handleMouseMove(e.clientX, e.clientY);
+        if (!level?.upgradeFacade) return;
+        level.upgradeFacade?.buttons.forEach(btn =>
+            btn.isHovered(e.clientX, e.clientY)
+        );
     });
 
     window.addEventListener('click', e => {
         viewRenderer.handleClick(e.clientX, e.clientY);
+        if (!level?.upgradeFacade) return;
+        level.upgradeFacade?.buttons.forEach(btn =>
+            console.log("test")
+        );
     });
 
     // -------- Resize --------
@@ -66,7 +75,7 @@ function onResize() {
 // PLAYER INPUT
 // =====================================================
 function handlePlayerMovement(level) {
-    if (!level || !level.player) return;
+    if (!level || !level.player || level.upgradeFacade?.active) return;
 
     let dx = 0;
     let dy = 0;
@@ -90,7 +99,7 @@ function loop(timestamp) {
 
     // -------- Update gameplay si pas dans le menu --------
     if (viewRenderer.currentView !== 'menu') {
-        const level = viewRenderer.levels[viewRenderer.currentView];
+        level = viewRenderer.levels[viewRenderer.currentView];
         handlePlayerMovement(level);
         level.update(dt);
     }
