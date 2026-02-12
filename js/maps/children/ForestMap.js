@@ -6,7 +6,7 @@ import PointGrey from '../../entities/enemies/PointGrey.js';
 export default class ForestMap extends Level {
 
     constructor() {
-        super('Forest', '../../assets/background_map/map1_background.png');
+        super('Forest', './assets/background_map/map1_background.png');
     }
 
     initSpawners() {

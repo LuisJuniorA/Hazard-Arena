@@ -51,30 +51,29 @@ async function init() {
     // -------- View Renderer --------
     viewRenderer = new ViewRenderer(ctx, levels);
 
+    // -------- Input clavier --------
+    window.addEventListener('keydown', e => keys[e.key] = true);
+    window.addEventListener('keyup', e => keys[e.key] = false);
+
+
     //auto play musique menu au premier click (obligation de faire ça à cause des restrictions de lecture automatique des navigateurs)
     //il autorise ensuite toutes les actions
     window.addEventListener('click', e => {
         soundManager.playMusic('mainMenu'); 
         document.getElementById('hider').style.display = 'none';
 
-        // -------- Input clavier --------
-        window.addEventListener('keydown', e => keys[e.key] = true);
-        window.addEventListener('keyup', e => keys[e.key] = false);
-
         // -------- Input souris (menu) --------
         window.addEventListener('mousemove', e => {
             viewRenderer.handleMouseMove(e.clientX, e.clientY);
         });
 
-    window.addEventListener('click', e => {
-        viewRenderer.handleClick(e.clientX, e.clientY);
-        if (!level?.upgradeFacade) return;
-        level.upgradeFacade?.buttons.forEach(btn =>
-            btn.isClicked(e.clientX, e.clientY)
-        );
-    });
-
-
+        window.addEventListener('click', e => {
+            viewRenderer.handleClick(e.clientX, e.clientY);
+            if (!level?.upgradeFacade) return;
+            level.upgradeFacade?.buttons.forEach(btn =>
+                btn.isClicked(e.clientX, e.clientY)
+            );
+        });
     },{ once: true });
 
     // -------- Resize --------
