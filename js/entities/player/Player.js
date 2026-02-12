@@ -1,5 +1,6 @@
 import Entity from '../base/Entity.js';
 import PlayerAttack from '../../behaviors/PlayerAttack.js';
+import UpgradeFacade from '../../facades/UpgradeFacade.js';
 import soundManager from '../../common/soundInstance.js';
 
 export default class Player extends Entity {
@@ -7,15 +8,25 @@ export default class Player extends Entity {
         super(x, y, 10); // radius 10
         this.levelRef = level;
         this.hp = 300;
-        this.speed = 5;
+        this.baseSpeed = 5;
+        this.baseDamage = 1;
+        this.baseAttackSpeed = 1;
+        this.burstCount = 3;
 
-        this.attackDamage = 1;
-        this.attackSpeed = 1;
+        this.speed = this.baseSpeed;
+        this.attackDamage = this.baseDamage;
+        this.attackSpeed = this.baseAttackSpeed;
         this.baseProjectileNumber = 1;
+        this.piercing = 0;
+        this.infinitePiercing = false;
+        this.piercingDamageMultiplier = 1;
+        this.piercingExecute = false;
+
 
         this.level = level;
         this.experience = 0;
         this.levelNumber = 0;
+        this.experienceRate = 1;
         this.experienceGrabRange = 10;
 
         this.upgrades = [];
@@ -25,13 +36,22 @@ export default class Player extends Entity {
 
     grabXp(xpAmount) {
         this.experience += xpAmount * this.experienceRate;
-
         while (this.experience >= 100) {
             this.experience -= 100;
             this.levelUp();
         }
         soundManager.xpGain();
     }
+
+    levelUp() {
+        this.levelNumber++;
+        soundManager.levelUp();
+        if (!this.levelRef.upgradeFacade) {
+            this.levelRef.upgradeFacade = new UpgradeFacade(this);
+        }
+        this.levelRef.upgradeFacade.open(); // active l'écran d'upgrade
+    }
+
 
     addUpgrade(upgrade) {
         const existing = this.upgrades.find(u => u.id === upgrade.id);
@@ -43,7 +63,7 @@ export default class Player extends Entity {
             upgrade.apply(this);
             this.upgrades.push(upgrade);
         }
-        soundManager.levelUp();
+        soundManager.upgrade();
 
         return true;
     }

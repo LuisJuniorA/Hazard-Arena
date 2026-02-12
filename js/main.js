@@ -1,5 +1,8 @@
-import Level from './entities/Level.js';
 import ViewRenderer from './methods/ViewRenderer.js';
+import ForestMap from './maps/children/ForestMap.js';
+import WasteworldMap from './maps/children/WasteworldMap.js';
+import SnowMap from './maps/children/SnowMap.js';
+import ComplexMap from './maps/children/ComplexMap.js';
 import soundManager from './common/soundInstance.js';
 import AssetLoader from './common/AssetLoader.js';
 
@@ -12,6 +15,7 @@ let canvas, ctx;
 let lastTime = 0;
 let viewRenderer;
 const keys = {};
+let level;
 
 // =====================================================
 // INIT
@@ -38,10 +42,10 @@ async function init() {
 
     // -------- Levels --------
     const levels = {
-        map1: new Level('Forest', './assets/background_map/map1_background.png'),
-        map2: new Level('Wasteworld', './assets/background_map/map2_background.png'),
-        map3: new Level('Snow', './assets/background_map/map3_background.png'),
-        map4: new Level('Complex', './assets/background_map/map4_background.png')
+        map1: ForestMap,
+        map2: WasteworldMap,
+        map3: SnowMap,
+        map4: ComplexMap
     };
 
     // -------- View Renderer --------
@@ -62,9 +66,13 @@ async function init() {
             viewRenderer.handleMouseMove(e.clientX, e.clientY);
         });
 
-        window.addEventListener('click', e => {
-            viewRenderer.handleClick(e.clientX, e.clientY);
-        });
+    window.addEventListener('click', e => {
+        viewRenderer.handleClick(e.clientX, e.clientY);
+        if (!level?.upgradeFacade) return;
+        level.upgradeFacade?.buttons.forEach(btn =>
+            btn.isClicked(e.clientX, e.clientY)
+        );
+    });
 
 
     },{ once: true });
@@ -87,7 +95,7 @@ function onResize() {
 // PLAYER INPUT
 // =====================================================
 function handlePlayerMovement(level) {
-    if (!level || !level.player) return;
+    if (!level || !level.player || level.upgradeFacade?.active) return;
 
     let dx = 0;
     let dy = 0;
@@ -111,7 +119,7 @@ function loop(timestamp) {
 
     // -------- Update gameplay si pas dans le menu --------
     if (viewRenderer.currentView !== 'menu') {
-        const level = viewRenderer.levels[viewRenderer.currentView];
+        level = viewRenderer.currentLevel;
         handlePlayerMovement(level);
         level.update(dt);
     }
