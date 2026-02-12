@@ -6,7 +6,7 @@ import BigDot from '../../entities/enemies/BigDot.js';
 export default class SnowMap extends Level {
 
     constructor() {
-        super('Snow', '../../assets/background_map/map3_background.png');
+        super('Snow', './assets/background_map/map3_background.png');
     }
 
     initSpawners() {
