@@ -35,7 +35,7 @@ export default class Fireball extends Projectile {
         this.particles.x = this.x;
         this.particles.y = this.y;
         this.particles.update(dt, this.x, this.y);
-        
+
         if (this.explosion.active) {
             this.explosion.update(dt);
         } else if (this.dead) {
@@ -44,12 +44,12 @@ export default class Fireball extends Projectile {
     }
 
     render(ctx, canvas, player) {
-    const camX = player.x - canvas.width / 2;
-    const camY = player.y - canvas.height / 2;
-    this.particles.render(ctx, camX, camY); // On passe la caméra aux particules
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(this.x - camX, this.y - camY, this.radius / 2, 0, Math.PI * 2);
-    ctx.fill();
-}
+        const camX = player.x - canvas.width / 2;
+        const camY = player.y - canvas.height / 2;
+        this.particles.render(ctx, camX, camY); // On passe la caméra aux particules 
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(this.x - camX, this.y - camY, this.radius / 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }

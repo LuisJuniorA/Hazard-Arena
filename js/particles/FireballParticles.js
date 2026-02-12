@@ -25,7 +25,7 @@ export default class FireballParticles {
 
     render(ctx, camX, camY) {
         for (const p of this.particles) {
-            p.render(ctx, camX, camY); // On relaie les coordonnées de caméra
+            p.render(ctx, camX, camY); // On relaie les coordonnées de caméra 
         }
     }
 }

@@ -10,7 +10,7 @@ import UpgradeButton from "../methods/UpgradeButton.js";
 export default class UpgradeFacade {
     constructor(player) {
         this.player = player;
-        this.allUpgrades = [FireballUpgrade];
+        this.allUpgrades = [Force, Vitesse, AttackSpeed, BurstAmount, Piercing, FireballUpgrade];
 
         this.active = false;
         this.buttons = [];
