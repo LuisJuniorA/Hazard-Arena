@@ -3,13 +3,14 @@ import Vitesse from "../upgrades/mobility/Vitesse.js"
 import AttackSpeed from "../upgrades/offensive/AttackSpeed.js";
 import BurstAmount from "../upgrades/offensive/BurstAmount.js";
 import Piercing from "../upgrades/offensive/Piercing.js";
+import FireballUpgrade from "../upgrades/offensive/FireballUpgrade.js";
 import UpgradeRoller from "../utils/UpgradeRoller.js"
 import UpgradeButton from "../methods/UpgradeButton.js";
 
 export default class UpgradeFacade {
     constructor(player) {
         this.player = player;
-        this.allUpgrades = [Force, Vitesse, AttackSpeed, BurstAmount, Piercing];
+        this.allUpgrades = [FireballUpgrade];
 
         this.active = false;
         this.buttons = [];
