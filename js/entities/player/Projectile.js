@@ -2,8 +2,21 @@ import Entity from '../base/Entity.js';
 import DealDamage from '../../behaviors/DealDamage.js';
 
 export default class Projectile extends Entity {
-    constructor(x, y, vx, vy, level, speed = 200, damage = 1, color = '#4FC3F7', radius = 4, ttl = 5) {
+    constructor(
+        x,
+        y,
+        vx,
+        vy,
+        level,
+        speed = 200,
+        damage = 1,
+        color = '#4FC3F7',
+        radius = 4,
+        ttl = 5,
+        damageOptions = {}
+    ) {
         super(x, y, radius);
+
         this.vx = vx;
         this.vy = vy;
         this.speed = speed;
@@ -12,7 +25,14 @@ export default class Projectile extends Entity {
         this.ttl = ttl;
         this.level = level;
 
-        if (level) this.addBehavior(new DealDamage(damage, { once: true }));
+        if (level) {
+            this.addBehavior(
+                new DealDamage(damage, {
+                    once: false,
+                    ...damageOptions
+                })
+            );
+        }
     }
 
     update(dt) {
@@ -27,6 +47,7 @@ export default class Projectile extends Entity {
 
     render(ctx, canvas, player) {
         ctx.save();
+
         const screenX = this.x - player.x + canvas.width / 2;
         const screenY = this.y - player.y + canvas.height / 2;
 
@@ -34,6 +55,7 @@ export default class Projectile extends Entity {
         ctx.beginPath();
         ctx.arc(screenX, screenY, this.radius, 0, Math.PI * 2);
         ctx.fill();
+
         ctx.restore();
     }
 }

@@ -1,5 +1,8 @@
-import Level from './entities/Level.js';
 import ViewRenderer from './methods/ViewRenderer.js';
+import ForestMap from './maps/children/ForestMap.js';
+import WasteworldMap from './maps/children/WasteworldMap.js';
+import SnowMap from './maps/children/SnowMap.js';
+import ComplexMap from './maps/children/ComplexMap.js';
 
 window.onload = init;
 
@@ -27,10 +30,10 @@ function init() {
 
     // -------- Levels --------
     const levels = {
-        map1: new Level('Forest', './assets/background_map/map1_background.png'),
-        map2: new Level('Wasteworld', './assets/background_map/map2_background.png'),
-        map3: new Level('Snow', './assets/background_map/map3_background.png'),
-        map4: new Level('Complex', './assets/background_map/map4_background.png')
+        map1: ForestMap,
+        map2: WasteworldMap,
+        map3: SnowMap,
+        map4: ComplexMap
     };
 
     // -------- View Renderer --------
@@ -95,7 +98,7 @@ function loop(timestamp) {
 
     // -------- Update gameplay si pas dans le menu --------
     if (viewRenderer.currentView !== 'menu') {
-        level = viewRenderer.levels[viewRenderer.currentView];
+        level = viewRenderer.currentLevel;
         handlePlayerMovement(level);
         level.update(dt);
     }

@@ -23,7 +23,4 @@ export default class Entity {
 
     render(ctx, canvas, player = null) {}
 
-    takeDamage(amount) {
-        // peut être surchargé par des classes qui ont de la vie
-    }
 }
