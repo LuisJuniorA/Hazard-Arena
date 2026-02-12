@@ -28,9 +28,12 @@ async function init() {
 
     // -------- Asset Loading --------
     const loader = new AssetLoader(soundManager);
+    const start = performance.now();
     console.log("Loading assets...");
     await loader.loadAll();
     console.log("Assets loaded");
+    const end = performance.now();
+    console.log(`Temps de chargement: ${(end - start).toFixed(2)} ms`);
 
 
     // -------- Levels --------

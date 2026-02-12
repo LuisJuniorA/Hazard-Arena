@@ -1,5 +1,6 @@
 import Character from './Character.js';
 import XP from '../player/XP.js';
+import soundManager from '../../common/soundInstance.js';
 
 export default class Enemy extends Character {
     constructor(x, y, level, config = {}) {
@@ -14,6 +15,8 @@ export default class Enemy extends Character {
             const xp = new XP(this.x, this.y, this.level, this.xpAmount);
             this.level.addXP(xp);
         }
+        soundManager.ennemyHit();
+        
     }
 
     render(ctx, canvas) {

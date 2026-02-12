@@ -1,5 +1,6 @@
 import Entity from '../base/Entity.js';
 import PlayerAttack from '../../behaviors/PlayerAttack.js';
+import soundManager from '../../common/soundInstance.js';
 
 export default class Player extends Entity {
     constructor(x, y, level) {
@@ -29,6 +30,7 @@ export default class Player extends Entity {
             this.experience -= 100;
             this.levelUp();
         }
+        soundManager.xpGain();
     }
 
     addUpgrade(upgrade) {
@@ -41,6 +43,7 @@ export default class Player extends Entity {
             upgrade.apply(this);
             this.upgrades.push(upgrade);
         }
+        soundManager.levelUp();
 
         return true;
     }
@@ -53,7 +56,12 @@ export default class Player extends Entity {
 
     takeDamage(amount) {
         this.hp -= amount;
-        if (this.hp <= 0) this.hp = 0;
+        if (this.hp <= 0) {
+            this.hp = 0;
+            soundManager.playerDeath();
+        } else {
+            soundManager.playerHit();
+        }
     }
 
     render(ctx, canvas) {
