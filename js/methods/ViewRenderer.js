@@ -1,4 +1,6 @@
 import soundManager from '../common/soundInstance.js';
+import assetLoader from '../common/AssetLoader.js';
+
 export default class ViewRenderer {
     constructor(ctx, levelClasses) {
         this.ctx = ctx;
@@ -25,8 +27,7 @@ export default class ViewRenderer {
         ];
 
         this.menuButtons.forEach(btn => {
-            btn.image = new Image();
-            btn.image.src = `./assets/background_map/${btn.map}_background.png`;
+            btn.image = assetLoader.getImage(`./assets/background_map/${btn.map}_background.png`);
             btn.isHovered = false;
             btn.minx = 0;
             btn.miny = 0;

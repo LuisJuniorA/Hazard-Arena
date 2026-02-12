@@ -4,7 +4,7 @@ import WasteworldMap from './maps/children/WasteworldMap.js';
 import SnowMap from './maps/children/SnowMap.js';
 import ComplexMap from './maps/children/ComplexMap.js';
 import soundManager from './common/soundInstance.js';
-import AssetLoader from './common/AssetLoader.js';
+import assetLoader from './common/AssetLoader.js';
 
 window.onload = () => init();;
 
@@ -31,10 +31,10 @@ async function init() {
     ctx.imageSmoothingQuality = 'high';
 
     // -------- Asset Loading --------
-    const loader = new AssetLoader(soundManager);
+    assetLoader.soundManager = soundManager;
     const start = performance.now();
     console.log("Loading assets...");
-    await loader.loadAll();
+    await assetLoader.loadAll();
     console.log("Assets loaded");
     const end = performance.now();
     console.log(`Temps de chargement: ${(end - start).toFixed(2)} ms`);
