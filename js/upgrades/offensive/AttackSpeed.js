@@ -21,7 +21,6 @@ export default class AttackSpeed extends Upgrade {
     }
 
     getDescription() {
-        console.log(this.level)
         if (this.level < this.maxLevel) {
             return `Augmente la vitesse d'attaque de ${AttackSpeed.bonus[this.level] * 100}%`;
         }

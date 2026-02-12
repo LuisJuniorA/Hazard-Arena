@@ -10,11 +10,17 @@ export default class Player extends Entity {
         this.baseSpeed = 5;
         this.baseDamage = 1;
         this.baseAttackSpeed = 1;
+        this.burstCount = 3;
 
         this.speed = this.baseSpeed;
         this.attackDamage = this.baseDamage;
         this.attackSpeed = this.baseAttackSpeed;
         this.baseProjectileNumber = 1;
+        this.piercing = 0;
+        this.infinitePiercing = false;
+        this.piercingDamageMultiplier = 1;
+        this.piercingExecute = false;
+
 
         this.level = level;
         this.experience = 0;
@@ -74,6 +80,5 @@ export default class Player extends Entity {
         ctx.fillStyle = 'red';
         ctx.fillRect(canvas.width / 2 - 10, canvas.height / 2 - 10, 20, 20);
         ctx.restore();
-        console.log(this.speed);
     }
 }

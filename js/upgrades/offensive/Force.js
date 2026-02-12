@@ -1,6 +1,8 @@
 import Upgrade from '../../entities/base/Upgrade.js';
 
 export default class Force extends Upgrade {
+    static bonus = [0.5, 1, 2];
+
     constructor() {
         super({
             id: 'force',
@@ -9,19 +11,20 @@ export default class Force extends Upgrade {
     }
 
     apply(player) {
-        super.apply(player);
+        if (this.level >= this.maxLevel) return;
 
-        const bonus = [0.05, 0.10, 0.15][this.level - 1];
+        const bonus = Force.bonus[this.level]; // bonus du PROCHAIN niveau
+
         player.attackDamage = player.baseDamage * (1 + bonus);
+
+        this.level++;
     }
 
     getDescription() {
-        const nextLevel = this.level + 1;
-
-        if (nextLevel <= 3) {
-            return `Augmente les dégâts de ${nextLevel * 5}%`;
+        if (this.level < this.maxLevel) {
+            return `Augmente les dégats de ${Force.bonus[this.level] * 100}%`;
         }
 
-        return `Fusion : Execute les ennemis sous 10% PV`;
+        return `Niveau max atteint`;
     }
 }

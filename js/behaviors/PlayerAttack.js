@@ -2,14 +2,11 @@ import Behavior from '../entities/base/Behavior.js';
 import Projectile from '../entities/player/Projectile.js';
 
 export default class PlayerAttack extends Behavior {
-    /**
-     * @param {number} burstCount - projectiles par rafale
-     * @param {number} burstInterval - délai entre projectiles (s)
-     */
-    constructor(burstCount = 3, burstInterval = 0.1) {
+
+    constructor(burstInterval = 0.1) {
         super();
 
-        this.burstCount = burstCount;
+        this.burstCount = 0;
         this.burstInterval = burstInterval;
 
         this.cooldown = 0;
@@ -20,15 +17,18 @@ export default class PlayerAttack extends Behavior {
     update(dt) {
         const player = this.entity;
         const level = this.level;
+
         if (!player || !level) return;
 
-        this.cooldown -= dt;
+        this.burstCount = player.burstCount;
 
+        this.cooldown -= dt;
         if (this.cooldown > 0) return;
 
         this.burstTimer -= dt;
 
         if (this.burstTimer <= 0 && this.currentBurst < this.burstCount) {
+
             const target = this.getClosestEnemy(player, level);
             if (target) this.shoot(player, target, level);
 
@@ -63,6 +63,7 @@ export default class PlayerAttack extends Behavior {
     }
 
     shoot(player, target, level) {
+
         const dx = target.x - player.x;
         const dy = target.y - player.y;
         const dist = Math.hypot(dx, dy) || 0.001;
@@ -77,7 +78,15 @@ export default class PlayerAttack extends Behavior {
             vy,
             level,
             300,
-            player.attackDamage
+            player.attackDamage * (player.piercingDamageMultiplier ?? 1),
+            '#4FC3F7',
+            4,
+            5,
+            {
+                piercing: player.piercing ?? 0,
+                infinitePiercing: player.infinitePiercing ?? false,
+                execute: player.piercingExecute ?? false
+            }
         );
 
         level.addProjectile(projectile);

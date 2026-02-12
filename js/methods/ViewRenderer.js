@@ -1,14 +1,19 @@
 export default class ViewRenderer {
-    constructor(ctx, levels) {
+    constructor(ctx, levelClasses) {
         this.ctx = ctx;
         this.canvas = ctx.canvas;
 
-        // views: 'menu' | mapName
+        // Vue actuelle : 'menu' ou nom de map
         this.currentView = 'menu';
 
-        // -------- Levels --------
-        this.levels = levels;
-        this.unlockedLevels = ['map1', 'map2', 'map3', 'map4']; // TODO: real unlock system
+        // ⚠️ On stocke les CLASSES, pas les instances
+        this.levelClasses = levelClasses;
+
+        // Instance active uniquement
+        this.currentLevel = null;
+
+        // -------- Levels unlock --------
+        this.unlockedLevels = ['map1', 'map2', 'map3', 'map4']; // TODO: vrai système
 
         // -------- Menu --------
         this.menuButtons = [
@@ -22,7 +27,10 @@ export default class ViewRenderer {
             btn.image = new Image();
             btn.image.src = `./assets/background_map/${btn.map}_background.png`;
             btn.isHovered = false;
-            btn.minx = btn.miny = btn.maxx = btn.maxy = 0;
+            btn.minx = 0;
+            btn.miny = 0;
+            btn.maxx = 0;
+            btn.maxy = 0;
         });
 
         // -------- Stars background --------
@@ -39,15 +47,47 @@ export default class ViewRenderer {
 
     loadMap(mapName) {
         if (!this.unlockedLevels.includes(mapName)) return;
-        if (!this.levels[mapName]) {
-            console.error(`Level "${mapName}" not found`);
+
+        const LevelClass = this.levelClasses[mapName];
+
+        if (!LevelClass) {
+            console.error(`Level class "${mapName}" not found`);
             return;
         }
+
+        // 🔥 Nettoyage ancienne instance
+        if (this.currentLevel?.destroy) {
+            this.currentLevel.destroy();
+        }
+
+        // ✅ Instanciation lazy
+        this.currentLevel = new LevelClass();
+
         this.currentView = mapName;
     }
 
     loadMenu() {
+        // 🔥 Nettoyage si on revient au menu
+        if (this.currentLevel?.destroy) {
+            this.currentLevel.destroy();
+        }
+
+        this.currentLevel = null;
         this.currentView = 'menu';
+    }
+
+    getCurrentLevel() {
+        return this.currentLevel;
+    }
+
+    // =====================================================
+    // UPDATE
+    // =====================================================
+
+    update(dt) {
+        if (this.currentView !== 'menu') {
+            this.currentLevel?.update(dt);
+        }
     }
 
     // =====================================================
@@ -58,7 +98,7 @@ export default class ViewRenderer {
         if (this.currentView === 'menu') {
             this.#renderMenu();
         } else {
-            this.levels[this.currentView]?.render(this.ctx, this.canvas);
+            this.currentLevel?.render(this.ctx, this.canvas);
         }
     }
 
@@ -72,11 +112,13 @@ export default class ViewRenderer {
 
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, width, height);
+
         this.#renderStars();
 
         const buttonWidth = Math.min(320, width * 0.7);
         const buttonHeight = 60;
         const spacing = 20;
+
         const totalHeight =
             this.menuButtons.length * buttonHeight +
             (this.menuButtons.length - 1) * spacing;
@@ -97,6 +139,7 @@ export default class ViewRenderer {
 
         this.menuButtons.forEach((btn, i) => {
             const y = startY + i * (buttonHeight + spacing);
+
             this.#renderButton(
                 startX,
                 y,
@@ -123,6 +166,7 @@ export default class ViewRenderer {
         ctx.fillStyle = 'white';
         ctx.fillText(text, x + w / 2, y + h / 2);
 
+        // Hitbox
         btn.minx = x;
         btn.maxx = x + w;
         btn.miny = y;
@@ -148,6 +192,7 @@ export default class ViewRenderer {
                 s.y = 0;
                 s.x = Math.random() * width;
             }
+
             if (s.x < 0) {
                 s.x = width + Math.random() * height;
                 s.y = Math.random() * height;

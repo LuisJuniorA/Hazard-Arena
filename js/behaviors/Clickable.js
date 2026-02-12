@@ -8,7 +8,6 @@ export default class Clickable extends Behavior {
             if (btn.facade) {
                 btn.facade.apply(btn.upgrade.constructor);
                 btn.facade.close();
-                console.log(btn.upgrade.getDescription());
             }
         }
     }
