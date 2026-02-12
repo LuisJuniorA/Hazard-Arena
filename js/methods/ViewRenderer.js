@@ -44,11 +44,7 @@ export default class ViewRenderer {
             console.error(`Level "${mapName}" not found`);
             return;
         }
-        soundManager.clickLoadMap();
-
-        setTimeout(() => {
-            soundManager.playMusic(mapName);
-        }, soundManager.sounds.clickLoadMap.audioLength * 1000);
+        soundManager.loadMap(mapName);
         this.currentView = mapName;
     }
 

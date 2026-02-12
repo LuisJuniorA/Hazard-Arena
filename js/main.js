@@ -32,6 +32,7 @@ async function init() {
     await loader.loadAll();
     console.log("Assets loaded");
 
+
     // -------- Levels --------
     const levels = {
         map1: new Level('Forest', './assets/background_map/map1_background.png'),
@@ -43,18 +44,27 @@ async function init() {
     // -------- View Renderer --------
     viewRenderer = new ViewRenderer(ctx, levels);
 
-    // -------- Input clavier --------
-    window.addEventListener('keydown', e => keys[e.key] = true);
-    window.addEventListener('keyup', e => keys[e.key] = false);
-
-    // -------- Input souris (menu) --------
-    window.addEventListener('mousemove', e => {
-        viewRenderer.handleMouseMove(e.clientX, e.clientY);
-    });
-
+    //auto play musique menu au premier click (obligation de faire ça à cause des restrictions de lecture automatique des navigateurs)
+    //il autorise ensuite toutes les actions
     window.addEventListener('click', e => {
-        viewRenderer.handleClick(e.clientX, e.clientY);
-    });
+        soundManager.playMusic('mainMenu'); 
+        document.getElementById('hider').style.display = 'none';
+
+        // -------- Input clavier --------
+        window.addEventListener('keydown', e => keys[e.key] = true);
+        window.addEventListener('keyup', e => keys[e.key] = false);
+
+        // -------- Input souris (menu) --------
+        window.addEventListener('mousemove', e => {
+            viewRenderer.handleMouseMove(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('click', e => {
+            viewRenderer.handleClick(e.clientX, e.clientY);
+        });
+
+
+    },{ once: true });
 
     // -------- Resize --------
     window.addEventListener('resize', onResize);
@@ -108,8 +118,3 @@ function loop(timestamp) {
 
     requestAnimationFrame(loop);
 }
-
-
-window.addEventListener("mousemove", async () => {
-    await audioContext.resume();
-}, { once: true });
