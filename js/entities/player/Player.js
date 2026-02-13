@@ -1,7 +1,6 @@
 import Entity from '../base/Entity.js';
 import PlayerAttack from '../../behaviors/PlayerAttack.js';
 import UpgradeFacade from '../../facades/UpgradeFacade.js';
-import EntityManager from '../../utils/EntityManager.js';
 import soundManager from '../../common/soundInstance.js';
 
 export default class Player extends Entity {
@@ -9,6 +8,7 @@ export default class Player extends Entity {
         super(x, y, 10); // radius 10
         this.levelRef = level;
         this.hp = 300;
+        this.maxHealth = 300;
         this.baseSpeed = 5;
         this.baseDamage = 1;
         this.baseAttackSpeed = 1;
@@ -35,7 +35,7 @@ export default class Player extends Entity {
         this.upgrades = [];
         this.behaviors = [];
         this.addBehavior(new PlayerAttack());
-        
+
         this.canDash = false;
         this.dashCooldown = 10;
         this.dashTimer = 0;

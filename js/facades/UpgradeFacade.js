@@ -6,8 +6,8 @@ import BurstAmount from "../upgrades/offensive/BurstAmount.js";
 import Piercing from "../upgrades/offensive/Piercing.js";
 import FireballUpgrade from "../upgrades/offensive/FireballUpgrade.js";
 import UpgradeRoller from "../utils/UpgradeRoller.js"
-import UpgradeButton from "../methods/UpgradeButton.js";
 import soundManager from "../common/soundInstance.js";
+import UpgradeButton from "../methods/hud/UpgradeButton.js";
 
 export default class UpgradeFacade {
     constructor(player) {

@@ -59,7 +59,7 @@ async function init() {
     //auto play musique menu au premier click (obligation de faire ça à cause des restrictions de lecture automatique des navigateurs)
     //il autorise ensuite toutes les actions
     window.addEventListener('click', e => {
-        soundManager.playMusic('mainMenu'); 
+        soundManager.playMusic('mainMenu');
         document.getElementById('hider').style.display = 'none';
 
         // -------- Input souris (menu) --------
@@ -74,7 +74,7 @@ async function init() {
                 btn.isClicked(e.clientX, e.clientY)
             );
         });
-    },{ once: true });
+    }, { once: true });
 
     // -------- Resize --------
     window.addEventListener('resize', onResize);
@@ -132,6 +132,6 @@ function loop(timestamp) {
 
     // -------- Render (menu OU level) --------
     viewRenderer.render();
-
+    viewRenderer.update(dt);
     requestAnimationFrame(loop);
 }

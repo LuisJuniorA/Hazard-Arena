@@ -1,5 +1,9 @@
 import soundManager from '../common/soundInstance.js';
 import assetLoader from '../common/AssetLoader.js';
+import AbilityHUD from './hud/AbilityHUD.js';
+import HUDManager from './HUDManager.js';
+import HealthHUD from './hud/HealthHUD.js';
+import ExperienceHUD from './hud/ExperienceHUD.js';
 
 export default class ViewRenderer {
     constructor(ctx, levelClasses) {
@@ -41,6 +45,8 @@ export default class ViewRenderer {
             y: Math.random() * this.canvas.height,
             r: Math.random() * 1.5 + 0.5
         }));
+        this.hudManager = new HUDManager();
+        this.abilityHUD = null;
     }
 
     // =====================================================
@@ -67,6 +73,13 @@ export default class ViewRenderer {
 
         soundManager.loadMap(mapName);
         this.currentView = mapName;
+        this.currentLevel = new LevelClass();
+
+        this.hudManager.clear();
+
+        this.hudManager.add(new AbilityHUD(this.currentLevel.player));
+        this.hudManager.add(new HealthHUD(this.currentLevel.player));
+        this.hudManager.add(new ExperienceHUD(this.currentLevel.player));
     }
 
     loadMenu() {
@@ -91,6 +104,7 @@ export default class ViewRenderer {
     update(dt) {
         if (this.currentView !== 'menu') {
             this.currentLevel?.update(dt);
+            this.hudManager.update(dt);
         }
     }
 
@@ -103,6 +117,7 @@ export default class ViewRenderer {
             this.#renderMenu();
         } else {
             this.currentLevel?.render(this.ctx, this.canvas);
+            this.hudManager.render(this.ctx, this.canvas);
         }
     }
 
