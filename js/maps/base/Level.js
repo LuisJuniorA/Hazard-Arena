@@ -1,6 +1,7 @@
 import EntityManager from '../../utils/EntityManager.js';
 import Player from '../../entities/player/Player.js';
 import assetLoader from '../../common/AssetLoader.js';
+import Timer from '../../methods/Timer.js';
 
 export default class Level {
 
@@ -19,15 +20,17 @@ export default class Level {
         this.xpEntities = [];
 
         this.behaviors = [];
+        this.timer = new Timer(15 * 60);
 
         // Appelé automatiquement
         this.initSpawners();
+        this.timer.start();
     }
 
     /**
      * Méthode à override dans les maps enfants
      */
-    initSpawners() {}
+    initSpawners() { }
 
     // -------- Player --------
     setPlayer(player) {
@@ -60,6 +63,7 @@ export default class Level {
         for (const b of this.behaviors) b.update?.(dt);
 
         this.player?.update(dt, this);
+        this.timer.update(dt);
         for (const e of this.enemies) e.update(dt);
         for (const p of this.projectiles) p.update(dt);
         for (const xp of this.xpEntities) xp.update(dt);
@@ -98,6 +102,7 @@ export default class Level {
         this.upgradeFacade?.render(ctx, canvas);
 
         ctx.restore();
+        this.timer.render(ctx, canvas);
     }
 
     addBehavior(behavior) {
