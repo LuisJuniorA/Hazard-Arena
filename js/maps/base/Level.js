@@ -103,6 +103,113 @@ export default class Level {
 
         ctx.restore();
         this.timer.render(ctx, canvas);
+        this.renderAbilityCooldowns(ctx, canvas);
+    }
+
+    // -------- HUD : Cooldown des compétences actives --------
+    renderAbilityCooldowns(ctx, canvas) {
+        if (!this.player) return;
+
+        // Collecter les infos de cooldown de toutes les upgrades actives
+        const abilities = [];
+        for (const upgrade of this.player.upgrades) {
+            const info = upgrade.getCooldownInfo?.(this.player);
+            if (info) abilities.push(info);
+        }
+        if (abilities.length === 0) return;
+
+        const radius = 28;
+        const lineWidth = 5;
+        const spacing = 70; // espace entre chaque icône
+        const startX = canvas.width - 60; // première position en bas à droite
+        const startY = canvas.height - 60;
+        const minX = canvas.width * 0.67; // limite à 33% de largeur depuis la droite
+
+        ctx.save();
+
+        for (let i = 0; i < abilities.length; i++) {
+            // Calcul de la position en grille (droite → gauche, puis remonte)
+            let cx = startX - i * spacing;
+            let row = 0;
+            while (cx < minX) {
+                row++;
+                cx += Math.floor((startX - minX) / spacing + 1) * spacing;
+            }
+            // Recalculer cx pour cette ligne
+            const itemsPerRow = Math.floor((startX - minX) / spacing) + 1;
+            const indexInRow = i % itemsPerRow;
+            const rowIndex = Math.floor(i / itemsPerRow);
+            cx = startX - indexInRow * spacing;
+            const cy = startY - rowIndex * spacing;
+            this.renderOneAbility(ctx, cx, cy, radius, lineWidth, abilities[i]);
+        }
+
+        ctx.restore();
+    }
+
+    renderOneAbility(ctx, cx, cy, radius, lineWidth, info) {
+        const { name, key, cooldown, timer, active } = info;
+        const ready = timer <= 0 && !active;
+        const progress = ready ? 1 : 1 - (timer / cooldown);
+
+        // --- Cercle de fond délavé ---
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(40, 40, 40, 0.6)';
+        ctx.fill();
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.stroke();
+
+        // --- Arc de remplissage (progression du cooldown) ---
+        if (!ready) {
+            const startAngle = -Math.PI / 2;
+            const endAngle = startAngle + progress * Math.PI * 2;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 180, 255, 0.35)';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, startAngle, endAngle);
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = 'rgba(0, 180, 255, 0.8)';
+            ctx.stroke();
+        } else {
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = 'rgba(0, 220, 255, 0.9)';
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius + 4, 0, Math.PI * 2);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(0, 220, 255, 0.3)';
+            ctx.stroke();
+        }
+
+        // --- Texte central ---
+        ctx.fillStyle = ready ? '#ffffff' : 'rgba(255, 255, 255, 0.5)';
+        ctx.font = 'bold 13px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if (!ready) {
+            ctx.fillText(`${Math.ceil(timer)}s`, cx, cy);
+        } else {
+            ctx.fillText(name, cx, cy);
+        }
+
+        // --- Label touche sous le cercle ---
+        if (key) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.font = '10px Arial';
+            ctx.fillText(key, cx, cy + radius + 14);
+        }
     }
 
     addBehavior(behavior) {

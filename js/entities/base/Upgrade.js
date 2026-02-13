@@ -18,5 +18,9 @@ export default class Upgrade {
         return '';
     }
 
+    getCooldownInfo(player) {
+        return null;
+    }
+
     remove(entity) { }
 }
