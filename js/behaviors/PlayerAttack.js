@@ -1,5 +1,6 @@
 import Behavior from '../entities/base/Behavior.js';
 import Projectile from '../entities/player/Projectile.js';
+import EntityManager from '../utils/EntityManager.js';
 import soundManager from '../common/soundInstance.js';
 
 export default class PlayerAttack extends Behavior {
@@ -30,7 +31,7 @@ export default class PlayerAttack extends Behavior {
 
         if (this.burstTimer <= 0 && this.currentBurst < this.burstCount) {
 
-            const target = this.getClosestEnemy(player, level);
+            const target = EntityManager.getClosestEnemy(player, level.enemies);
             if (target) this.shoot(player, target, level);
 
             this.currentBurst++;
@@ -43,34 +44,9 @@ export default class PlayerAttack extends Behavior {
         }
     }
 
-    getClosestEnemy(player, level) {
-        let closest = null;
-        let closestDist = Infinity;
-
-        for (const e of level.enemies) {
-            if (e.dead) continue;
-
-            const dx = e.x - player.x;
-            const dy = e.y - player.y;
-            const dist = dx * dx + dy * dy;
-
-            if (dist < closestDist) {
-                closestDist = dist;
-                closest = e;
-            }
-        }
-
-        return closest;
-    }
 
     shoot(player, target, level) {
-
-        const dx = target.x - player.x;
-        const dy = target.y - player.y;
-        const dist = Math.hypot(dx, dy) || 0.001;
-
-        const vx = dx / dist;
-        const vy = dy / dist;
+        const { vx, vy } = EntityManager.getEnemyVector(player, target);
 
         const projectile = new Projectile(
             player.x,
