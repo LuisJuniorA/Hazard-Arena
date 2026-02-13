@@ -104,6 +104,12 @@ function handlePlayerMovement(level) {
     if (keys['ArrowLeft'] || keys['q'] || keys['a']) dx -= 1;
     if (keys['ArrowRight'] || keys['d']) dx += 1;
 
+    // Dash
+    if (keys[' ']) {
+        level.player.dash();
+        keys[' '] = false; // eviter le dash continu
+    }
+
     level.player.move(dx, dy);
 }
 
@@ -120,6 +126,7 @@ function loop(timestamp) {
     if (viewRenderer.currentView !== 'menu') {
         level = viewRenderer.currentLevel;
         handlePlayerMovement(level);
+        if (level?.player) level.player.updateDash(dt);
         level.update(dt);
     }
 
