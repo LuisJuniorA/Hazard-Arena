@@ -1,7 +1,7 @@
 
 # Hazard Arena – TP Jeu HTML5 Canvas
 
-**Auteurs :** Luis-Junior ARAUJO DA COSTA, Tristan TRONCONNI  
+**Auteurs :** Luis-Junior ARAUJO DA COSTA, Tristan TRONCONI  
 **Date :** 13/02/2026  
 **Repository GitHub :** <https://github.com/LuisJuniorA/Hazard-Arena>  
 
