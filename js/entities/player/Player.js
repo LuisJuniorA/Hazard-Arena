@@ -1,7 +1,6 @@
 import Entity from '../base/Entity.js';
 import PlayerAttack from '../../behaviors/PlayerAttack.js';
 import UpgradeFacade from '../../facades/UpgradeFacade.js';
-import EntityManager from '../../utils/EntityManager.js';
 import soundManager from '../../common/soundInstance.js';
 
 export default class Player extends Entity {
@@ -9,6 +8,7 @@ export default class Player extends Entity {
         super(x, y, 10); // radius 10
         this.levelRef = level;
         this.hp = 300;
+        this.maxHealth = 300;
         this.baseSpeed = 5;
         this.baseDamage = 1;
         this.baseAttackSpeed = 1;
@@ -26,7 +26,6 @@ export default class Player extends Entity {
         this.piercingDamageMultiplier = 1;
         this.piercingExecute = false;
 
-
         this.level = level;
         this.experience = 0;
         this.levelNumber = 0;
@@ -36,6 +35,17 @@ export default class Player extends Entity {
         this.upgrades = [];
         this.behaviors = [];
         this.addBehavior(new PlayerAttack());
+
+        this.canDash = false;
+        this.dashCooldown = 10;
+        this.dashTimer = 0;
+        this.isDashing = false;
+        this.dashDuration = 0.15;
+        this.dashSpeed = 40;
+        this.dashElapsed = 0;
+        this.dashDirX = 0;
+        this.dashDirY = 0;
+
     }
 
     grabXp(xpAmount) {
@@ -73,7 +83,40 @@ export default class Player extends Entity {
     }
 
 
+    dash() {
+        if (!this.canDash || this.isDashing || this.dashTimer > 0) return;
+
+        this.isDashing = true;
+        this.dashElapsed = 0;
+        // Direction du dash = dernière direction de mouvement
+        const len = Math.sqrt(this.lastMoveX ** 2 + this.lastMoveY ** 2) || 1;
+        this.dashDirX = this.lastMoveX / len;
+        this.dashDirY = this.lastMoveY / len;
+    }
+
+    updateDash(dt) {
+        // Réduire le cooldown
+        if (this.dashTimer > 0) {
+            this.dashTimer -= dt;
+            if (this.dashTimer < 0) this.dashTimer = 0;
+        }
+
+        // Pendant le dash
+        if (this.isDashing) {
+            this.dashElapsed += dt;
+            this.x += this.dashDirX * this.dashSpeed;
+            this.y += this.dashDirY * this.dashSpeed;
+
+            if (this.dashElapsed >= this.dashDuration) {
+                this.isDashing = false;
+                this.dashTimer = this.dashCooldown;
+            }
+        }
+    }
+
     move(dx, dy) {
+        if (this.isDashing) return; // bloquer le mouvement normal pendant le dash
+
         if (dx !== 0 || dy !== 0) {
             this.lastMoveX = dx;
             this.lastMoveY = dy;

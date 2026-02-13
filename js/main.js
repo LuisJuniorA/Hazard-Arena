@@ -59,7 +59,7 @@ async function init() {
     //auto play musique menu au premier click (obligation de faire ça à cause des restrictions de lecture automatique des navigateurs)
     //il autorise ensuite toutes les actions
     window.addEventListener('click', e => {
-        soundManager.playMusic('mainMenu'); 
+        soundManager.playMusic('mainMenu');
         document.getElementById('hider').style.display = 'none';
 
         // -------- Input souris (menu) --------
@@ -74,7 +74,7 @@ async function init() {
                 btn.isClicked(e.clientX, e.clientY)
             );
         });
-    },{ once: true });
+    }, { once: true });
 
     // -------- Resize --------
     window.addEventListener('resize', onResize);
@@ -104,6 +104,12 @@ function handlePlayerMovement(level) {
     if (keys['ArrowLeft'] || keys['q'] || keys['a']) dx -= 1;
     if (keys['ArrowRight'] || keys['d']) dx += 1;
 
+    // Dash
+    if (keys[' ']) {
+        level.player.dash();
+        keys[' '] = false; // eviter le dash continu
+    }
+
     level.player.move(dx, dy);
 }
 
@@ -120,11 +126,12 @@ function loop(timestamp) {
     if (viewRenderer.currentView !== 'menu') {
         level = viewRenderer.currentLevel;
         handlePlayerMovement(level);
+        if (level?.player) level.player.updateDash(dt);
         level.update(dt);
     }
 
     // -------- Render (menu OU level) --------
     viewRenderer.render();
-
+    viewRenderer.update(dt);
     requestAnimationFrame(loop);
 }

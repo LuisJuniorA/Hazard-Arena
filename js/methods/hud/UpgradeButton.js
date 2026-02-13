@@ -1,4 +1,4 @@
-import Clickable from '../behaviors/Clickable.js';
+import Clickable from '../../behaviors/Clickable.js';
 
 export default class UpgradeButton {
     constructor(upgrade, index, total, width = 150, height = 250, facade) {

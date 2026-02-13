@@ -1,7 +1,7 @@
 import EntityManager from '../../utils/EntityManager.js';
 import Player from '../../entities/player/Player.js';
 import assetLoader from '../../common/AssetLoader.js';
-import Timer from '../../methods/Timer.js';
+import Timer from '../../methods/hud/Timer.js';
 
 export default class Level {
 
