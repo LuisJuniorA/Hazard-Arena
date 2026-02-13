@@ -99,11 +99,44 @@ export default class Level {
             this.player?.render(ctx, canvas);
         }
 
-        this.upgradeFacade?.render(ctx, canvas);
-
         ctx.restore();
         this.timer.render(ctx, canvas);
+        this.renderArena(ctx, canvas);
+        this.upgradeFacade?.render(ctx, canvas);
     }
+
+    renderArena(ctx, canvas) {
+        if (!this.arena || !this.player) return;
+
+        const { x, y, radius } = this.arena;
+        const player = this.player;
+
+        const screenX = x - player.x + canvas.width / 2;
+        const screenY = y - player.y + canvas.height / 2;
+
+        ctx.save();
+
+        // Glow
+        ctx.shadowColor = "rgba(255, 0, 150, 0.8)";
+        ctx.shadowBlur = 30;
+
+        ctx.beginPath();
+        ctx.arc(screenX, screenY, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255, 0, 150, 0.9)";
+        ctx.lineWidth = 8;
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+
+        // Zone intérieure
+        ctx.beginPath();
+        ctx.arc(screenX, screenY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 0, 150, 0.05)";
+        ctx.fill();
+
+        ctx.restore();
+    }
+
 
     addBehavior(behavior) {
         behavior.onAttach(this, this.level);

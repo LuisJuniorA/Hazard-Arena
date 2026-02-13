@@ -29,13 +29,14 @@ export default class EntityManager {
         return closest;
     }
 
-    static getEnemyVector(player, target){
+    static getEnemyVector(player, target) {
+        if (!player || !target) return;
         const dx = target.x - player.x;
         const dy = target.y - player.y;
         const dist = Math.hypot(dx, dy) || 0.001;
 
         const vx = dx / dist;
         const vy = dy / dist;
-        return {vx, vy};
+        return { vx, vy };
     }
 }

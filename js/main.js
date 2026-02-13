@@ -126,8 +126,6 @@ function loop(timestamp) {
     if (viewRenderer.currentView !== 'menu') {
         level = viewRenderer.currentLevel;
         handlePlayerMovement(level);
-        if (level?.player) level.player.updateDash(dt);
-        level.update(dt);
     }
 
     // -------- Render (menu OU level) --------

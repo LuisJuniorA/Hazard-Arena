@@ -1,4 +1,5 @@
 import FireTrail from "./trail/FireTrail.js";
+import FireSmoke from "./smoke/FireSmoke.js";
 
 export default class FireballParticles {
     constructor() {
@@ -8,6 +9,7 @@ export default class FireballParticles {
     addTrail(x, y) {
         for (let i = 0; i < 8; i++) {
             this.particles.push(new FireTrail(x, y));
+            this.particles.push(new FireSmoke(x, y));
         }
     }
 

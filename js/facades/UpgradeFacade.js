@@ -80,6 +80,8 @@ export default class UpgradeFacade {
 
     render(ctx, canvas) {
         if (!this.active) return;
+        ctx.save();
         for (const btn of this.buttons) btn.render(ctx, canvas);
+        ctx.restore();
     }
 }
