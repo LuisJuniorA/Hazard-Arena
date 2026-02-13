@@ -4,7 +4,7 @@ import FireballParticles from "../../particles/FireballParticles.js";
 
 export default class Fireball extends Projectile {
     constructor(x, y, vx, vy, level) {
-        const explosion = new ExplodeOnHit(60, 0.3); // radius, duration
+        const explosion = new ExplodeOnHit(60, 10); // radius, duration
 
         super(
             x,
@@ -38,8 +38,6 @@ export default class Fireball extends Projectile {
 
         if (this.explosion.active) {
             this.explosion.update(dt);
-        } else if (this.dead) {
-            this.dead = true;
         }
     }
 
