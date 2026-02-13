@@ -6,6 +6,7 @@ import Piercing from "../upgrades/offensive/Piercing.js";
 import FireballUpgrade from "../upgrades/offensive/FireballUpgrade.js";
 import UpgradeRoller from "../utils/UpgradeRoller.js"
 import UpgradeButton from "../methods/UpgradeButton.js";
+import soundManager from "../common/soundInstance.js";
 
 export default class UpgradeFacade {
     constructor(player) {
@@ -63,6 +64,7 @@ export default class UpgradeFacade {
             upgrade.apply(this.player);
             this.player.upgrades.push(upgrade);
         }
+        soundManager.clickUpgrade();
     }
 
     close() {

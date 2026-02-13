@@ -1,13 +1,14 @@
 import EntityManager from '../../utils/EntityManager.js';
 import Player from '../../entities/player/Player.js';
+import assetLoader from '../../common/AssetLoader.js';
 
 export default class Level {
 
     constructor(name, backgroundSrc) {
         this.name = name;
 
-        this.backgroundImage = new Image();
-        this.backgroundImage.src = backgroundSrc;
+        this.backgroundImage = assetLoader.getImage(backgroundSrc) ?? new Image();
+        if (!this.backgroundImage.src) this.backgroundImage.src = backgroundSrc;
 
         this.upgradeFacade = null;
 

@@ -1,6 +1,7 @@
 import Behavior from '../entities/base/Behavior.js';
 import Projectile from '../entities/player/Projectile.js';
 import EntityManager from '../utils/EntityManager.js';
+import soundManager from '../common/soundInstance.js';
 
 export default class PlayerAttack extends Behavior {
 
@@ -66,5 +67,6 @@ export default class PlayerAttack extends Behavior {
         );
 
         level.addProjectile(projectile);
+        soundManager.shoot();
     }
 }

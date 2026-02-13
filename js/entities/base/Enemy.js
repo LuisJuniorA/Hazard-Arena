@@ -3,6 +3,7 @@ import XP from '../player/XP.js';
 import ChasePlayer from '../../behaviors/ChasePlayer.js'
 import ContactDamage from '../../behaviors/ContactDamage.js'
 import AvoidOtherEnemies from '../../behaviors/AvoidOtherEnemies.js'
+import soundManager from '../../common/soundInstance.js';
 
 export default class Enemy extends Character {
     constructor(x, y, level, config = {}) {
@@ -20,6 +21,8 @@ export default class Enemy extends Character {
             const xp = new XP(this.x, this.y, this.level, this.xpAmount);
             this.level.addXP(xp);
         }
+        soundManager.ennemyHit();
+        
     }
 
     render(ctx, canvas) {

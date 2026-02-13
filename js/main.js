@@ -3,8 +3,10 @@ import ForestMap from './maps/children/ForestMap.js';
 import WasteworldMap from './maps/children/WasteworldMap.js';
 import SnowMap from './maps/children/SnowMap.js';
 import ComplexMap from './maps/children/ComplexMap.js';
+import soundManager from './common/soundInstance.js';
+import assetLoader from './common/AssetLoader.js';
 
-window.onload = init;
+window.onload = () => init();;
 
 // =====================================================
 // GLOBALS
@@ -18,7 +20,7 @@ let level;
 // =====================================================
 // INIT
 // =====================================================
-function init() {
+async function init() {
     // -------- Canvas --------
     canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth;
@@ -27,6 +29,16 @@ function init() {
     ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
+
+    // -------- Asset Loading --------
+    assetLoader.soundManager = soundManager;
+    const start = performance.now();
+    console.log("Loading assets...");
+    await assetLoader.loadAll();
+    console.log("Assets loaded");
+    const end = performance.now();
+    console.log(`Temps de chargement: ${(end - start).toFixed(2)} ms`);
+
 
     // -------- Levels --------
     const levels = {
@@ -43,18 +55,26 @@ function init() {
     window.addEventListener('keydown', e => keys[e.key] = true);
     window.addEventListener('keyup', e => keys[e.key] = false);
 
-    // -------- Input souris (menu) --------
-    window.addEventListener('mousemove', e => {
-        viewRenderer.handleMouseMove(e.clientX, e.clientY);
-    });
 
+    //auto play musique menu au premier click (obligation de faire ça à cause des restrictions de lecture automatique des navigateurs)
+    //il autorise ensuite toutes les actions
     window.addEventListener('click', e => {
-        viewRenderer.handleClick(e.clientX, e.clientY);
-        if (!level?.upgradeFacade) return;
-        level.upgradeFacade?.buttons.forEach(btn =>
-            btn.isClicked(e.clientX, e.clientY)
-        );
-    });
+        soundManager.playMusic('mainMenu'); 
+        document.getElementById('hider').style.display = 'none';
+
+        // -------- Input souris (menu) --------
+        window.addEventListener('mousemove', e => {
+            viewRenderer.handleMouseMove(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('click', e => {
+            viewRenderer.handleClick(e.clientX, e.clientY);
+            if (!level?.upgradeFacade) return;
+            level.upgradeFacade?.buttons.forEach(btn =>
+                btn.isClicked(e.clientX, e.clientY)
+            );
+        });
+    },{ once: true });
 
     // -------- Resize --------
     window.addEventListener('resize', onResize);

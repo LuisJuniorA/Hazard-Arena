@@ -2,6 +2,7 @@ import Entity from '../base/Entity.js';
 import PlayerAttack from '../../behaviors/PlayerAttack.js';
 import UpgradeFacade from '../../facades/UpgradeFacade.js';
 import EntityManager from '../../utils/EntityManager.js';
+import soundManager from '../../common/soundInstance.js';
 
 export default class Player extends Entity {
     constructor(x, y, level) {
@@ -43,10 +44,12 @@ export default class Player extends Entity {
             this.experience -= 100;
             this.levelUp();
         }
+        soundManager.xpGain();
     }
 
     levelUp() {
         this.levelNumber++;
+        soundManager.levelUp();
         if (!this.levelRef.upgradeFacade) {
             this.levelRef.upgradeFacade = new UpgradeFacade(this);
         }
@@ -64,6 +67,7 @@ export default class Player extends Entity {
             upgrade.apply(this);
             this.upgrades.push(upgrade);
         }
+        soundManager.upgrade();
 
         return true;
     }
@@ -83,7 +87,12 @@ export default class Player extends Entity {
 
     takeDamage(amount) {
         this.hp -= amount;
-        if (this.hp <= 0) this.hp = 0;
+        if (this.hp <= 0) {
+            this.hp = 0;
+            soundManager.playerDeath();
+        } else {
+            soundManager.playerHit();
+        }
     }
 
     render(ctx, canvas) {
