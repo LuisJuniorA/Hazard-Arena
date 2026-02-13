@@ -20,7 +20,7 @@ export default class Level {
 
         this.behaviors = [];
 
-        // 🔥 Appelé automatiquement
+        // Appelé automatiquement
         this.initSpawners();
     }
 
