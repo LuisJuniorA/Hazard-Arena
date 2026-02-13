@@ -7,7 +7,7 @@ export default class PointBlack extends Enemy {
             speed: 80,
             radius: 4,
             color: 'black',
-            xpAmount: 100,
+            xpAmount: 1,
             damage: 1
         });
     }

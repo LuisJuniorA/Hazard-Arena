@@ -1,5 +1,5 @@
 import Enemy from './Enemy.js';
-import BossArenaBehavior from '../../behaviors/BossArenaBehavior.js';
+import BossArena from '../../behaviors/BossArena.js';
 
 export default class Boss extends Enemy {
     constructor(x, y, level) {
@@ -11,22 +11,26 @@ export default class Boss extends Enemy {
             xpAmount: 50
         });
 
-        this.color = "#8e44ad"; // violet boss
+        this.color = "#8e44ad";
         this.isBoss = true;
 
-        this.addBehavior(new BossArenaBehavior());
+        this._deathHandled = false;
+
+        this.addBehavior(new BossArena());
     }
 
     takeDamage(amount) {
         super.takeDamage(amount);
 
         if (this.dead) {
+            this._deathHandled = true;
+            this.dead = false;
             this.onDeath();
         }
     }
 
     onDeath() {
         console.log("Boss defeated!");
-        // nettoyage spécial si nécessaire
+        // ici tu peux déclencher loot, son, etc.
     }
 }

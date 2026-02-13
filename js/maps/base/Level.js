@@ -99,11 +99,10 @@ export default class Level {
             this.player?.render(ctx, canvas);
         }
 
-        this.upgradeFacade?.render(ctx, canvas);
-
         ctx.restore();
         this.timer.render(ctx, canvas);
-        this.renderArena();
+        this.renderArena(ctx, canvas);
+        this.upgradeFacade?.render(ctx, canvas);
     }
 
     renderArena(ctx, canvas) {

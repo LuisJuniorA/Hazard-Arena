@@ -50,10 +50,6 @@ export default class Player extends Entity {
 
     grabXp(xpAmount) {
         this.experience += xpAmount * this.experienceRate;
-        while (this.experience >= 100) {
-            this.experience -= 100;
-            this.levelUp();
-        }
         soundManager.xpGain();
     }
 
@@ -94,7 +90,13 @@ export default class Player extends Entity {
         this.dashDirY = this.lastMoveY / len;
     }
 
-    updateDash(dt) {
+    update(dt) {
+        super.update(dt);
+        if (this.experience >= 100) {
+            this.experience -= 100;
+            this.levelUp();
+        }
+
         // Réduire le cooldown
         if (this.dashTimer > 0) {
             this.dashTimer -= dt;

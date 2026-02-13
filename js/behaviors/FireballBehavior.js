@@ -25,6 +25,7 @@ export default class FireballBehavior extends Behavior {
         this.timer = 0;
         const target = EntityManager.getClosestEnemy(player, this.level.enemies);
         const { vx, vy } = EntityManager.getEnemyVector(player, target);
+        if (!vx || !vy) return;
 
         // crée le projectile
         const fireball = new Fireball(

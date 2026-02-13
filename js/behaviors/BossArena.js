@@ -1,6 +1,7 @@
 import Behavior from '../entities/base/Behavior.js';
+import EnemySpawner from './EnemySpawner.js';
 
-export default class BossArenaBehavior extends Behavior {
+export default class BossArena extends Behavior {
 
     constructor(radius = 400) {
         super();
@@ -26,7 +27,7 @@ export default class BossArenaBehavior extends Behavior {
 
         // Stop spawners
         this.level.behaviors.forEach(b => {
-            if (b.isSpawner) b.enabled = false;
+            if (b instanceof EnemySpawner) b.enabled = false;
         });
     }
 
@@ -37,7 +38,7 @@ export default class BossArenaBehavior extends Behavior {
         const arena = this.level.arena;
 
         // Si boss mort → fin d’arène
-        if (this.entity.dead) {
+        if (this.entity._deathHandled) {
             this.deactivateArena();
             return;
         }
@@ -55,12 +56,13 @@ export default class BossArenaBehavior extends Behavior {
     }
 
     deactivateArena() {
-        // Réactive spawners
         this.level.behaviors.forEach(b => {
-            if (b.isSpawner) b.enabled = true;
+            if (b instanceof EnemySpawner) b.enabled = true;
         });
-
         this.level.arena = null;
-        this.enabled = false;
+
+        // Maintenant on peut vraiment tuer le boss
+        this.entity.dead = true;
     }
+
 }

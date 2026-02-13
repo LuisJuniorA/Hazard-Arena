@@ -25,7 +25,7 @@ export default class ExperienceHUD {
         const x = canvas.width / 2 - width / 2;
         const y = canvas.height - 20;
 
-        const xpPercent = this.displayedXP / 100; // car level up à 100
+        const xpPercent = Math.min(this.displayedXP / 100, 1);
 
         // ===== Fond =====
         ctx.fillStyle = "#1a1a2e";
