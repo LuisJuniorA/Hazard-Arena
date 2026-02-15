@@ -74,6 +74,7 @@ export default class ViewRenderer {
         soundManager.loadMap(mapName);
         this.currentView = mapName;
         this.currentLevel = new LevelClass();
+        this.currentLevel._viewRenderer = this; // ref pour EndScreen retry/menu
 
         this.hudManager.clear();
 
@@ -230,6 +231,12 @@ export default class ViewRenderer {
     // =====================================================
 
     handleMouseMove(x, y) {
+        // EndScreen hover
+        if (this.currentLevel?.endScreen?.active) {
+            this.currentLevel.endScreen.handleMouseMove(x, y);
+            return;
+        }
+
         if (this.currentView !== 'menu') return;
 
         for (const btn of this.menuButtons) {
@@ -242,6 +249,12 @@ export default class ViewRenderer {
     }
 
     handleClick(x, y) {
+        // EndScreen click
+        if (this.currentLevel?.endScreen?.active) {
+            this.currentLevel.endScreen.handleClick(x, y);
+            return;
+        }
+
         if (this.currentView !== 'menu') return;
 
         for (const btn of this.menuButtons) {

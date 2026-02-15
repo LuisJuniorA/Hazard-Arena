@@ -2,6 +2,7 @@ import EntityManager from '../../utils/EntityManager.js';
 import Player from '../../entities/player/Player.js';
 import assetLoader from '../../common/AssetLoader.js';
 import Timer from '../../methods/hud/Timer.js';
+import EndScreen from '../../methods/hud/EndScreen.js';
 
 export default class Level {
 
@@ -21,6 +22,9 @@ export default class Level {
 
         this.behaviors = [];
         this.timer = new Timer(15 * 60);
+
+        this.endScreen = new EndScreen();
+        this.gameOver = false;
 
         // Appelé automatiquement
         this.initSpawners();
@@ -47,13 +51,18 @@ export default class Level {
         this.projectiles.push(proj);
     }
 
-    // -------- XP --------
+    // -------- XP -------- 
     addXP(xp) {
         this.xpEntities.push(xp);
     }
 
     // -------- Update --------
     update(dt) {
+
+        if (this.endScreen.active) {
+            this.endScreen.update(dt);
+            return;
+        }
 
         if (this.upgradeFacade?.active) {
             this.upgradeFacade.update(dt);
@@ -71,6 +80,41 @@ export default class Level {
         EntityManager.cleanupInPlace(this.enemies);
         EntityManager.cleanupInPlace(this.projectiles);
         EntityManager.cleanupInPlace(this.xpEntities);
+
+        // --- Détection fin de partie ---
+        this.checkEndConditions();
+    }
+
+    checkEndConditions() {
+        if (this.gameOver) return;
+
+        if (this.player && this.player.hp <= 0) {// potenetiellement changer la detection pour les amélioration liés à la mort
+            this.triggerEnd(false);
+            return;
+        }
+
+        for (const e of this.enemies) {
+            if (e.isBoss && e._deathHandled && e.dead) {
+                this.triggerEnd(true);
+                return;
+            }
+        }
+    }
+
+    triggerEnd(victory) {
+        this.gameOver = true;
+        this.timer.pause();
+
+        const elapsed = this.timer.duration - this.timer.timeLeft;
+        const min = Math.floor(elapsed / 60);
+        const sec = Math.floor(elapsed % 60).toString().padStart(2, '0');
+
+        this.endScreen.open({
+            victory,
+            playerLevel: this.player?.levelNumber ?? 0,
+            timeElapsed: `${min}:${sec}`,
+            viewRenderer: this._viewRenderer
+        });
     }
 
     render(ctx, canvas) {
@@ -103,6 +147,7 @@ export default class Level {
         this.timer.render(ctx, canvas);
         this.renderArena(ctx, canvas);
         this.upgradeFacade?.render(ctx, canvas);
+        this.endScreen.render(ctx, canvas);
     }
 
     renderArena(ctx, canvas) {

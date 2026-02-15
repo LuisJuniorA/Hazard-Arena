@@ -94,7 +94,7 @@ function onResize() {
 // PLAYER INPUT
 // =====================================================
 function handlePlayerMovement(level) {
-    if (!level || !level.player || level.upgradeFacade?.active) return;
+    if (!level || !level.player || level.upgradeFacade?.active || level.endScreen?.active) return;
 
     let dx = 0;
     let dy = 0;
