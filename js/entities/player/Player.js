@@ -7,8 +7,11 @@ export default class Player extends Entity {
     constructor(x, y, level) {
         super(x, y, 10); // radius 10
         this.levelRef = level;
-        this.hp = 300;
-        this.maxHealth = 300;
+        this.maxHealth = 10;
+        this.hp = this.maxHealth;
+        this.healthRegenTimer = 0;
+        this.healthRegenInterval = 10; // secondes entre chaque regen
+        this.healthRegenAmount = 0;
         this.baseSpeed = 5;
         this.baseDamage = 1;
         this.baseAttackSpeed = 1;
@@ -96,6 +99,17 @@ export default class Player extends Entity {
         if (this.experience >= 100) {
             this.experience -= 100;
             this.levelUp();
+        }
+
+        // Regen HP
+        if (this.healthRegenAmount > 0 && this.hp < this.maxHealth) {
+            this.healthRegenTimer += dt;
+            if (this.healthRegenTimer >= this.healthRegenInterval) {
+                this.healthRegenTimer = 0;
+                this.hp = Math.min(this.hp + this.healthRegenAmount, this.maxHealth);
+            }
+        } else {
+            this.healthRegenTimer = 0;
         }
 
         // Réduire le cooldown

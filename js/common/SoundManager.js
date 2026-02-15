@@ -1,7 +1,7 @@
 
 export default class SoundManager {
     constructor() {
-        this.musicVolume = 0.4;
+        this.musicVolume = 0.2;
         this.soundVolume = 0.2;
 
         // =========================
