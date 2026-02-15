@@ -23,7 +23,7 @@ export default class Level {
         this.xpEntities = [];
 
         this.behaviors = [];
-        this.timer = new Timer(15 * 60);
+        this.timer = new Timer(7.5 * 60);
 
         this.endScreen = new EndScreen();
         this.pauseScreen = new PauseScreen();

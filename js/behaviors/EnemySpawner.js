@@ -10,7 +10,7 @@ export default class EnemySpawner extends Behavior {
         this.enemyClass = enemyClass;
 
         // Config
-        this.duration = options.duration ?? 15 * 60;
+        this.duration = options.duration ?? 7.5 * 60;
         this.spawnInterval = options.spawnInterval ?? 1;
         this.spawnIncrementInterval = options.spawnIncrementInterval ?? 5;
 

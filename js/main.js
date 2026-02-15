@@ -55,6 +55,11 @@ async function init() {
     window.addEventListener('keydown', e => {
         keys[e.key] = true;
 
+        // Upgrade menu: touches 1, 2, 3
+        if (level?.upgradeFacade?.active && ['1', '2', '3'].includes(e.key)) {
+            level.upgradeFacade.handleKeyDown(e.key);
+        }
+
         // Pause avec Escape
         if (e.key === 'Escape' && level && !level.endScreen?.active && !level.upgradeFacade?.active) {
             level.pauseScreen.toggle({

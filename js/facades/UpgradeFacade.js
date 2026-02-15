@@ -82,6 +82,21 @@ export default class UpgradeFacade {
         for (const btn of this.buttons) btn.update(dt);
     }
 
+    handleKeyDown(key) {
+        if (!this.active) return;
+
+        if ((key === '1' || key === '&') && this.buttons[0]) {
+            this.apply(this.buttons[0].upgrade.constructor);
+            this.close();
+        } else if ((key === '2' || key === 'é') && this.buttons[1]) {
+            this.apply(this.buttons[1].upgrade.constructor);
+            this.close();
+        } else if ((key === '3' || key === '"') && this.buttons[2]) {
+            this.apply(this.buttons[2].upgrade.constructor);
+            this.close();
+        }
+    }
+
     render(ctx, canvas) {
         if (!this.active) return;
         ctx.save();

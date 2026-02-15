@@ -61,7 +61,7 @@ export default class Player extends Entity {
     levelUp() {
         this.levelNumber++;
         soundManager.levelUp();
-        this.experienceRate *= 0.9;
+        this.experienceRate *= 0.8;
         if (!this.levelRef.upgradeFacade) {
             this.levelRef.upgradeFacade = new UpgradeFacade(this);
         }

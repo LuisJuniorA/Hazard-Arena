@@ -22,13 +22,13 @@ export default class ForestMap extends Level {
                 PointGrey,
                 { duration: 600, spawnInterval: 1, spawnIncrementInterval: 5 }
             ));
-        }, 5 * 60 * 1000);
+        }, 2.5 * 60 * 1000);
 
         setTimeout(() => {
             this.addBehavior(new EnemySpawner(
                 Boss,
                 { maxSpawns: 1 }
             ));
-        }, 15 * 60 * 1000);
+        }, 7.5 * 60 * 1000);
     }
 }
