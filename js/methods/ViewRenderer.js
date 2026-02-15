@@ -231,10 +231,21 @@ export default class ViewRenderer {
     // =====================================================
 
     handleMouseMove(x, y) {
+        // PauseScreen hover
+        if (this.currentLevel?.pauseScreen?.active) {
+            this.currentLevel.pauseScreen.handleMouseMove(x, y);
+            return;
+        }
+
         // EndScreen hover
         if (this.currentLevel?.endScreen?.active) {
             this.currentLevel.endScreen.handleMouseMove(x, y);
             return;
+        }
+
+        // Bouton pause hover en jeu
+        if (this.currentLevel) {
+            this.currentLevel.pauseButtonHUD?.handleMouseMove(x, y);
         }
 
         if (this.currentView !== 'menu') return;
@@ -249,11 +260,20 @@ export default class ViewRenderer {
     }
 
     handleClick(x, y) {
+        // PauseScreen click
+        if (this.currentLevel?.pauseScreen?.active) {
+            this.currentLevel.pauseScreen.handleClick(x, y);
+            return;
+        }
+
         // EndScreen click
         if (this.currentLevel?.endScreen?.active) {
             this.currentLevel.endScreen.handleClick(x, y);
             return;
         }
+
+        // Bouton pause click en jeu
+        if (this.currentLevel?.pauseButtonHUD?.handleClick(x, y)) return;
 
         if (this.currentView !== 'menu') return;
 

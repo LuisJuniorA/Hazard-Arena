@@ -52,7 +52,17 @@ async function init() {
     viewRenderer = new ViewRenderer(ctx, levels);
 
     // -------- Input clavier --------
-    window.addEventListener('keydown', e => keys[e.key] = true);
+    window.addEventListener('keydown', e => {
+        keys[e.key] = true;
+
+        // Pause avec Escape
+        if (e.key === 'Escape' && level && !level.endScreen?.active && !level.upgradeFacade?.active) {
+            level.pauseScreen.toggle({
+                viewRenderer: viewRenderer,
+                level: level
+            });
+        }
+    });
     window.addEventListener('keyup', e => keys[e.key] = false);
 
 
@@ -94,7 +104,7 @@ function onResize() {
 // PLAYER INPUT
 // =====================================================
 function handlePlayerMovement(level) {
-    if (!level || !level.player || level.upgradeFacade?.active || level.endScreen?.active) return;
+    if (!level || !level.player || level.upgradeFacade?.active || level.endScreen?.active || level.pauseScreen?.active) return;
 
     let dx = 0;
     let dy = 0;

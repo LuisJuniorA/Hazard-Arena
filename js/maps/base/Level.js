@@ -3,6 +3,8 @@ import Player from '../../entities/player/Player.js';
 import assetLoader from '../../common/AssetLoader.js';
 import Timer from '../../methods/hud/Timer.js';
 import EndScreen from '../../methods/hud/EndScreen.js';
+import PauseScreen from '../../methods/hud/PauseScreen.js';
+import PauseButtonHUD from '../../methods/hud/PauseButtonHUD.js';
 
 export default class Level {
 
@@ -24,6 +26,8 @@ export default class Level {
         this.timer = new Timer(15 * 60);
 
         this.endScreen = new EndScreen();
+        this.pauseScreen = new PauseScreen();
+        this.pauseButtonHUD = new PauseButtonHUD(this);
         this.gameOver = false;
 
         // Appelé automatiquement
@@ -61,6 +65,11 @@ export default class Level {
 
         if (this.endScreen.active) {
             this.endScreen.update(dt);
+            return;
+        }
+
+        if (this.pauseScreen.active) {
+            this.pauseScreen.update(dt);
             return;
         }
 
@@ -136,7 +145,7 @@ export default class Level {
             }
         }
 
-        if (!this.upgradeFacade?.active) {
+        if (!this.upgradeFacade?.active && !this.pauseScreen.active && !this.endScreen.active) {
             for (const e of this.enemies) e.render(ctx, canvas);
             for (const p of this.projectiles) p.render(ctx, canvas, this.player);
             for (const xp of this.xpEntities) xp.render?.(ctx, canvas, this.player);
@@ -147,7 +156,9 @@ export default class Level {
         this.timer.render(ctx, canvas);
         this.renderArena(ctx, canvas);
         this.upgradeFacade?.render(ctx, canvas);
+        this.pauseButtonHUD.render(ctx, canvas);
         this.endScreen.render(ctx, canvas);
+        this.pauseScreen.render(ctx, canvas);
     }
 
     renderArena(ctx, canvas) {
