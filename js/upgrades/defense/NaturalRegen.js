@@ -22,6 +22,6 @@ export default class NaturalRegen extends Upgrade {
     }
 
     getDescription() {
-        return `Restaure ${NaturalRegen.bonus[this.level]} points de vie toute les ${player.healthRegenInterval} secondes.`;
+        return `Restaure ${NaturalRegen.bonus[this.level]} points de vie toute les 10 secondes.`;
     }
 }
