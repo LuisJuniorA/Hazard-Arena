@@ -16,6 +16,7 @@ export default class Hp extends Upgrade {
         const bonus = Hp.bonus[this.level]; // bonus du PROCHAIN niveau
 
         player.maxHealth += bonus;
+        player.hp += bonus; // les pv max ajoutés sont aussi appliqués aux pv actuels
 
         this.level++;
     }
