@@ -6,6 +6,7 @@ export default class WasteworldMap extends Level {
 
     constructor() {
         super('Wasteworld', './assets/background_map/map2_background.png');
+        this.player.experienceRate = 0.5;
     }
 
     initSpawners() {

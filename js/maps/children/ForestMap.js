@@ -8,6 +8,7 @@ export default class ForestMap extends Level {
 
     constructor() {
         super('Forest', './assets/background_map/map1_background.png');
+        this.player.experienceRate = 1.5;
     }
 
     initSpawners() {

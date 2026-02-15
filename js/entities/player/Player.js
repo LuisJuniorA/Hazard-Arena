@@ -29,7 +29,7 @@ export default class Player extends Entity {
         this.level = level;
         this.experience = 0;
         this.levelNumber = 0;
-        this.experienceRate = 1;
+        this.experienceRate = 100;
         this.experienceGrabRange = 50;
 
         this.upgrades = [];
@@ -56,6 +56,7 @@ export default class Player extends Entity {
     levelUp() {
         this.levelNumber++;
         soundManager.levelUp();
+        this.experienceRate *= 0.9;
         if (!this.levelRef.upgradeFacade) {
             this.levelRef.upgradeFacade = new UpgradeFacade(this);
         }
@@ -134,7 +135,7 @@ export default class Player extends Entity {
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
-            soundManager.playerDeath();
+            soundManager.death();
         } else {
             soundManager.playerHit();
         }
