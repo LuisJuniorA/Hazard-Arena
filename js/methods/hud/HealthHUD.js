@@ -27,6 +27,7 @@ export default class HealthHUD {
 
         const healthPercent = this.displayedHealth / this.player.maxHealth;
 
+        ctx.save();
         // ===== Fond (vide) =====
         ctx.fillStyle = "#222";
         ctx.fillRect(x, y, width, height);
@@ -51,6 +52,7 @@ export default class HealthHUD {
             x + width / 2,
             y + height / 2 // 👈 vrai centre vertical
         );
+        ctx.restore();
     }
 
 }

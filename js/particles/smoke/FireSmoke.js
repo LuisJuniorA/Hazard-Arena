@@ -15,10 +15,12 @@ export default class FireSmoke extends ProjectileParticle {
     }
 
     render(ctx, camX, camY) {
+        ctx.save();
         if (this.opacity <= 0) return;
         ctx.fillStyle = `rgba(60,60,60,${this.opacity})`;
         ctx.beginPath();
         ctx.arc(this.x - camX, this.y - camY, this.r, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
     }
 }

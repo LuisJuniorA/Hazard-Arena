@@ -21,6 +21,9 @@ export default class Entity {
         }
     }
 
-    render(ctx, canvas, player = null) {}
+    render(ctx, canvas, player = null) {
+        ctx.save();
+        ctx.restore();
+    }
 
 }

@@ -113,12 +113,14 @@ export default class ViewRenderer {
     // =====================================================
 
     render() {
+        this.ctx.save();
         if (this.currentView === 'menu') {
             this.#renderMenu();
         } else {
             this.currentLevel?.render(this.ctx, this.canvas);
             this.hudManager.render(this.ctx, this.canvas);
         }
+        this.ctx.restore();
     }
 
     // =====================================================

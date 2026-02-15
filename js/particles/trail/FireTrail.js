@@ -21,6 +21,7 @@ export default class FireTrail extends ProjectileParticle {
         const drawX = this.x - camX;
         const drawY = this.y - camY;
 
+        ctx.save();
         const gradient = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, this.r);
         gradient.addColorStop(0, `rgba(255,255,0,${this.opacity})`);
         gradient.addColorStop(0.5, `rgba(255,165,0,${this.opacity * 0.7})`);
@@ -30,5 +31,6 @@ export default class FireTrail extends ProjectileParticle {
         ctx.beginPath();
         ctx.arc(drawX, drawY, this.r, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
     }
 }

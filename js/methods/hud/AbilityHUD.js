@@ -9,6 +9,7 @@ export default class AbilityHUD {
 
     render(ctx, canvas) {
         if (!this.player) return;
+        ctx.save();
 
         const abilities = [];
 
@@ -45,6 +46,7 @@ export default class AbilityHUD {
                 abilities[i]
             );
         }
+        ctx.restore();
     }
 
     renderOneAbility(ctx, cx, cy, radius, lineWidth, info) {

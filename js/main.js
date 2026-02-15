@@ -117,6 +117,7 @@ function handlePlayerMovement(level) {
 // MAIN LOOP
 // =====================================================
 function loop(timestamp) {
+    ctx.save();
     const dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
@@ -132,4 +133,5 @@ function loop(timestamp) {
     viewRenderer.render();
     viewRenderer.update(dt);
     requestAnimationFrame(loop);
+    ctx.restore();
 }

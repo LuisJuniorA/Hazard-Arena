@@ -27,6 +27,7 @@ export default class ExperienceHUD {
 
         const xpPercent = Math.min(this.displayedXP / 100, 1);
 
+        ctx.save();
         // ===== Fond =====
         ctx.fillStyle = "#1a1a2e";
         ctx.fillRect(x, y, width, height);
@@ -55,5 +56,6 @@ export default class ExperienceHUD {
             canvas.width / 2,
             y - 4
         );
+        ctx.restore();
     }
 }
