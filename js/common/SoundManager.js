@@ -1,7 +1,7 @@
 
 export default class SoundManager {
     constructor() {
-        this.musicVolume = 0.5;
+        this.musicVolume = 0.2;
         this.soundVolume = 0.2;
 
         // =========================
@@ -11,31 +11,31 @@ export default class SoundManager {
             mainMenu: new Howl({
                 src: ['./assets/sounds/musics/Background.mp3'],
                 loop: true,
-                volume: this.musicVolume,
+                volume: this.musicVolume*0.5,
                 html5: true
             }),
             map1: new Howl({
                 src: ['./assets/sounds/musics/map1.mp3'],
                 loop: true,
-                volume: this.musicVolume,
+                volume: this.musicVolume*1.0,
                 html5: true
             }),
             map2: new Howl({
                 src: ['./assets/sounds/musics/map2.mp3'],
                 loop: true,
-                volume: this.musicVolume,
+                volume: this.musicVolume*0.8,
                 html5: true
             }),
             map3: new Howl({
                 src: ['./assets/sounds/musics/map3.mp3'],
                 loop: true,
-                volume: this.musicVolume,
+                volume: this.musicVolume*0.7,
                 html5: true
             }),
             map4: new Howl({
                 src: ['./assets/sounds/musics/map4.mp3'],
                 loop: true, 
-                volume: this.musicVolume,
+                volume: this.musicVolume*0.9,
                 html5: true
             })
         };
@@ -46,29 +46,29 @@ export default class SoundManager {
         // SONS
         // =========================
         this.sounds = {
-            win: new Howl({ src: ['./assets/sounds/musics/win.mp3'], volume: this.soundVolume }),
+            win: new Howl({ src: ['./assets/sounds/musics/win.mp3'], volume: this.soundVolume*1.0 }),
             shoot: [
-                new Howl({ src: ['./assets/sounds/playerEvent/shooting1.mp3'], volume: this.soundVolume }),
-                new Howl({ src: ['./assets/sounds/playerEvent/shooting2.mp3'], volume: this.soundVolume }),
-                new Howl({ src: ['./assets/sounds/playerEvent/shooting3.mp3'], volume: this.soundVolume })
+                new Howl({ src: ['./assets/sounds/playerEvent/shooting1.mp3'], volume: this.soundVolume*1.0 }),
+                new Howl({ src: ['./assets/sounds/playerEvent/shooting2.mp3'], volume: this.soundVolume*1.0 }),
+                new Howl({ src: ['./assets/sounds/playerEvent/shooting3.mp3'], volume: this.soundVolume*1.0 })
             ],
             xpGain: [
-                new Howl({ src: ['./assets/sounds/playerEvent/xpGain1.mp3'], volume: this.soundVolume }),
-                new Howl({ src: ['./assets/sounds/playerEvent/xpGain2.mp3'], volume: this.soundVolume }),
-                new Howl({ src: ['./assets/sounds/playerEvent/xpGain3.mp3'], volume: this.soundVolume })
+                new Howl({ src: ['./assets/sounds/playerEvent/xpGain1.mp3'], volume: this.soundVolume*1.0 }),
+                new Howl({ src: ['./assets/sounds/playerEvent/xpGain2.mp3'], volume: this.soundVolume*1.0 }),
+                new Howl({ src: ['./assets/sounds/playerEvent/xpGain3.mp3'], volume: this.soundVolume*1.0 })
             ],
-            levelUp: new Howl({ src: ['./assets/sounds/playerEvent/levelUp.mp3'], volume: this.soundVolume }),
+            levelUp: new Howl({ src: ['./assets/sounds/playerEvent/levelUp.mp3'], volume: this.soundVolume*1.0 }),
             hit: [
-                new Howl({ src: ['./assets/sounds/playerEvent/hit1.mp3'], volume: this.soundVolume }),
-                new Howl({ src: ['./assets/sounds/playerEvent/hit2.mp3'], volume: this.soundVolume })
+                new Howl({ src: ['./assets/sounds/playerEvent/hit1.mp3'], volume: this.soundVolume*1.0 }),
+                new Howl({ src: ['./assets/sounds/playerEvent/hit2.mp3'], volume: this.soundVolume*1.0 })
             ],
-            death: new Howl({ src: ['./assets/sounds/playerEvent/death.mp3'], volume: this.soundVolume }),
-            megumin_explosion: new Howl({ src: ['./assets/sounds/playerEvent/megumin_explosion_1.mp3'], volume: this.soundVolume }),
-            tuturu: new Howl({ src: ['./assets/sounds/playerEvent/tuturu_1.mp3'], volume: this.soundVolume }),
-            playerDamage: new Howl({ src: ['./assets/sounds/playerEvent/playerDamage.mp3'], volume: this.soundVolume }),
-            clickCombo: new Howl({ src: ['./assets/sounds/mouseEvent/chooseCombo.mp3'], volume: this.soundVolume }),
-            clickUpgrade: new Howl({ src: ['./assets/sounds/mouseEvent/chooseUpgrade.mp3'], volume: this.soundVolume }),
-            clickLoadMap: new Howl({ src: ['./assets/sounds/mouseEvent/loadMap.mp3'], volume: this.soundVolume })
+            death: new Howl({ src: ['./assets/sounds/playerEvent/death.mp3'], volume: this.soundVolume*1.0 }),
+            megumin_explosion: new Howl({ src: ['./assets/sounds/playerEvent/megumin_explosion_1.mp3'], volume: this.soundVolume*1.0 }),
+            tuturu: new Howl({ src: ['./assets/sounds/playerEvent/tuturu_1.mp3'], volume: this.soundVolume*1.0 }),
+            playerDamage: new Howl({ src: ['./assets/sounds/playerEvent/playerDamage.mp3'], volume: this.soundVolume*1.0 }),
+            clickCombo: new Howl({ src: ['./assets/sounds/mouseEvent/chooseCombo.mp3'], volume: this.soundVolume*1.0 }),
+            clickUpgrade: new Howl({ src: ['./assets/sounds/mouseEvent/chooseUpgrade.mp3'], volume: this.soundVolume*1.0 }),
+            clickLoadMap: new Howl({ src: ['./assets/sounds/mouseEvent/loadMap.mp3'], volume: this.soundVolume*1.0 })
         };
     }
 

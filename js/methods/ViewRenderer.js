@@ -1,5 +1,9 @@
 import soundManager from '../common/soundInstance.js';
 import assetLoader from '../common/AssetLoader.js';
+import AbilityHUD from './hud/AbilityHUD.js';
+import HUDManager from './HUDManager.js';
+import HealthHUD from './hud/HealthHUD.js';
+import ExperienceHUD from './hud/ExperienceHUD.js';
 
 export default class ViewRenderer {
     constructor(ctx, levelClasses) {
@@ -41,6 +45,8 @@ export default class ViewRenderer {
             y: Math.random() * this.canvas.height,
             r: Math.random() * 1.5 + 0.5
         }));
+        this.hudManager = new HUDManager();
+        this.abilityHUD = null;
     }
 
     // =====================================================
@@ -67,6 +73,14 @@ export default class ViewRenderer {
 
         soundManager.loadMap(mapName);
         this.currentView = mapName;
+        this.currentLevel = new LevelClass();
+        this.currentLevel._viewRenderer = this; // ref pour EndScreen retry/menu
+
+        this.hudManager.clear();
+
+        this.hudManager.add(new AbilityHUD(this.currentLevel.player));
+        this.hudManager.add(new HealthHUD(this.currentLevel.player));
+        this.hudManager.add(new ExperienceHUD(this.currentLevel.player));
     }
 
     loadMenu() {
@@ -91,6 +105,7 @@ export default class ViewRenderer {
     update(dt) {
         if (this.currentView !== 'menu') {
             this.currentLevel?.update(dt);
+            this.hudManager.update(dt);
         }
     }
 
@@ -99,11 +114,14 @@ export default class ViewRenderer {
     // =====================================================
 
     render() {
+        this.ctx.save();
         if (this.currentView === 'menu') {
             this.#renderMenu();
         } else {
             this.currentLevel?.render(this.ctx, this.canvas);
+            this.hudManager.render(this.ctx, this.canvas);
         }
+        this.ctx.restore();
     }
 
     // =====================================================
@@ -213,6 +231,23 @@ export default class ViewRenderer {
     // =====================================================
 
     handleMouseMove(x, y) {
+        // PauseScreen hover
+        if (this.currentLevel?.pauseScreen?.active) {
+            this.currentLevel.pauseScreen.handleMouseMove(x, y);
+            return;
+        }
+
+        // EndScreen hover
+        if (this.currentLevel?.endScreen?.active) {
+            this.currentLevel.endScreen.handleMouseMove(x, y);
+            return;
+        }
+
+        // Bouton pause hover en jeu
+        if (this.currentLevel) {
+            this.currentLevel.pauseButtonHUD?.handleMouseMove(x, y);
+        }
+
         if (this.currentView !== 'menu') return;
 
         for (const btn of this.menuButtons) {
@@ -225,6 +260,21 @@ export default class ViewRenderer {
     }
 
     handleClick(x, y) {
+        // PauseScreen click
+        if (this.currentLevel?.pauseScreen?.active) {
+            this.currentLevel.pauseScreen.handleClick(x, y);
+            return;
+        }
+
+        // EndScreen click
+        if (this.currentLevel?.endScreen?.active) {
+            this.currentLevel.endScreen.handleClick(x, y);
+            return;
+        }
+
+        // Bouton pause click en jeu
+        if (this.currentLevel?.pauseButtonHUD?.handleClick(x, y)) return;
+
         if (this.currentView !== 'menu') return;
 
         for (const btn of this.menuButtons) {

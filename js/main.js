@@ -52,14 +52,24 @@ async function init() {
     viewRenderer = new ViewRenderer(ctx, levels);
 
     // -------- Input clavier --------
-    window.addEventListener('keydown', e => keys[e.key] = true);
+    window.addEventListener('keydown', e => {
+        keys[e.key] = true;
+
+        // Pause avec Escape
+        if (e.key === 'Escape' && level && !level.endScreen?.active && !level.upgradeFacade?.active) {
+            level.pauseScreen.toggle({
+                viewRenderer: viewRenderer,
+                level: level
+            });
+        }
+    });
     window.addEventListener('keyup', e => keys[e.key] = false);
 
 
     //auto play musique menu au premier click (obligation de faire ça à cause des restrictions de lecture automatique des navigateurs)
     //il autorise ensuite toutes les actions
     window.addEventListener('click', e => {
-        soundManager.playMusic('mainMenu'); 
+        soundManager.playMusic('mainMenu');
         document.getElementById('hider').style.display = 'none';
 
         // -------- Input souris (menu) --------
@@ -74,7 +84,7 @@ async function init() {
                 btn.isClicked(e.clientX, e.clientY)
             );
         });
-    },{ once: true });
+    }, { once: true });
 
     // -------- Resize --------
     window.addEventListener('resize', onResize);
@@ -94,7 +104,7 @@ function onResize() {
 // PLAYER INPUT
 // =====================================================
 function handlePlayerMovement(level) {
-    if (!level || !level.player || level.upgradeFacade?.active) return;
+    if (!level || !level.player || level.upgradeFacade?.active || level.endScreen?.active || level.pauseScreen?.active) return;
 
     let dx = 0;
     let dy = 0;
@@ -104,6 +114,12 @@ function handlePlayerMovement(level) {
     if (keys['ArrowLeft'] || keys['q'] || keys['a']) dx -= 1;
     if (keys['ArrowRight'] || keys['d']) dx += 1;
 
+    // Dash
+    if (keys[' ']) {
+        level.player.dash();
+        keys[' '] = false; // eviter le dash continu
+    }
+
     level.player.move(dx, dy);
 }
 
@@ -111,6 +127,7 @@ function handlePlayerMovement(level) {
 // MAIN LOOP
 // =====================================================
 function loop(timestamp) {
+    ctx.save();
     const dt = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
@@ -120,11 +137,11 @@ function loop(timestamp) {
     if (viewRenderer.currentView !== 'menu') {
         level = viewRenderer.currentLevel;
         handlePlayerMovement(level);
-        level.update(dt);
     }
 
     // -------- Render (menu OU level) --------
     viewRenderer.render();
-
+    viewRenderer.update(dt);
     requestAnimationFrame(loop);
+    ctx.restore();
 }

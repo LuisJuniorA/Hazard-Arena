@@ -8,6 +8,7 @@ export default class ComplexMap extends Level {
 
     constructor() {
         super('Complex', './assets/background_map/map4_background.png');
+        this.player.experienceRate = 2;
     }
 
     initSpawners() {
