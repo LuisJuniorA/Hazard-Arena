@@ -46,7 +46,9 @@ export default class PlayerAttack extends Behavior {
 
 
     shoot(player, target, level) {
-        const { vx, vy } = EntityManager.getEnemyVector(player, target);
+        const vector = EntityManager.getEnemyVector(player, target);
+        if (!vector) return;
+        const { vx, vy } = vector;
         if (!vx || !vy) return;
 
         const projectile = new Projectile(
