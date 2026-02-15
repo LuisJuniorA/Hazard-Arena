@@ -22,7 +22,7 @@ export default class Restaure extends Upgrade {
 
     getDescription() {
         if (this.level < this.maxLevel) {
-            return `Augmente les points de vie maximum de ${Restaure.bonus[this.level]}`;
+            return `Augmente les points de vie maximum de ${Restaure.bonus[0]}`;
         }
 
         return `Niveau max atteint`;
