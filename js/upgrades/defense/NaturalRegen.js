@@ -6,7 +6,7 @@ export default class NaturalRegen extends Upgrade {
     constructor() {
         super({
             id: 'NaturalRegen',
-            name: 'Health Regeneration'
+            name: 'Health Regen'
         });
     }
 
@@ -14,14 +14,16 @@ export default class NaturalRegen extends Upgrade {
         if (this.level >= this.maxLevel) return;
 
         const bonus = NaturalRegen.bonus[this.level]; // bonus du PROCHAIN niveau
-        let healed = bonus+player.hp;
-        if(healed > player.maxHealth) healed = player.maxHealth;
-        player.hp = healed;
+        player.healthRegenAmount = bonus;
 
         this.level++;
     }
 
     getDescription() {
-        return `Restaure ${NaturalRegen.bonus[this.level]} points de vie toute les 10 secondes.`;
+        if (this.level < this.maxLevel) {
+                return `Restaure ${NaturalRegen.bonus[this.level]} points de vie toute les 10 secondes.`;
+        }
+
+        return `Niveau max atteint`;
     }
 }

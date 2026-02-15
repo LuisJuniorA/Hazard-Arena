@@ -86,12 +86,12 @@ export default class Level {
         for (const p of this.projectiles) p.update(dt);
         for (const xp of this.xpEntities) xp.update(dt);
 
+        // --- Détection fin de partie ---
+        this.checkEndConditions();
+
         EntityManager.cleanupInPlace(this.enemies);
         EntityManager.cleanupInPlace(this.projectiles);
         EntityManager.cleanupInPlace(this.xpEntities);
-
-        // --- Détection fin de partie ---
-        this.checkEndConditions();
     }
 
     checkEndConditions() {

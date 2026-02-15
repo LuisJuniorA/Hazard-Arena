@@ -5,6 +5,7 @@ import AttackSpeed from "../upgrades/offensive/AttackSpeed.js";
 import BurstAmount from "../upgrades/offensive/BurstAmount.js";
 import Piercing from "../upgrades/offensive/Piercing.js";
 import FireballUpgrade from "../upgrades/offensive/FireballUpgrade.js";
+import Aura from "../upgrades/offensive/Aura.js";
 import UpgradeRoller from "../utils/UpgradeRoller.js"
 import soundManager from "../common/soundInstance.js";
 import UpgradeButton from "../methods/hud/UpgradeButton.js";
@@ -15,7 +16,7 @@ import Restaure from "../upgrades/defense/Resaure.js";
 export default class UpgradeFacade {
     constructor(player) {
         this.player = player;
-        this.allUpgrades = [Force, Vitesse, Dash, AttackSpeed, BurstAmount, Piercing, FireballUpgrade, Hp, NaturalRegen, Restaure];
+        this.allUpgrades = [Force, Vitesse, Dash, AttackSpeed, BurstAmount, Piercing, FireballUpgrade, Aura, Hp, NaturalRegen, Restaure];
 
         this.active = false;
         this.buttons = [];

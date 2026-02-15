@@ -7,7 +7,7 @@ export default class SnowMap extends Level {
 
     constructor() {
         super('Snow', './assets/background_map/map3_background.png');
-        this.player.experienceRate = 1;
+        this.player.experienceRate = 2;
     }
 
     initSpawners() {

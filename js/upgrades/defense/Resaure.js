@@ -5,8 +5,8 @@ export default class Restaure extends Upgrade {
 
     constructor() {
         super({
-            id: 'HP',
-            name: 'Heath Points'
+            id: 'Restaure',
+            name: 'HEAL'
         });
     }
 
@@ -14,15 +14,16 @@ export default class Restaure extends Upgrade {
         if (this.level >= this.maxLevel) return;
 
         const bonus = Restaure.bonus[0]; // bonus du PROCHAIN niveau
-
-        player.curr += bonus;
+        let healed = bonus+player.hp;
+        if(healed > player.maxHealth) healed = player.maxHealth;
+        player.hp = healed;        
 
         this.level++;
     }
 
     getDescription() {
         if (this.level < this.maxLevel) {
-            return `Augmente les points de vie maximum de ${Restaure.bonus[0]}`;
+            return `Restaure ${Restaure.bonus[0]} points de vie`;
         }
 
         return `Niveau max atteint`;

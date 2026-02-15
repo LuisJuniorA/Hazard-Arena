@@ -8,7 +8,7 @@ export default class ForestMap extends Level {
 
     constructor() {
         super('Forest', './assets/background_map/map1_background.png');
-        this.player.experienceRate = 1.5;
+        this.player.experienceRate = 2;
     }
 
     initSpawners() {
@@ -29,6 +29,6 @@ export default class ForestMap extends Level {
                 Boss,
                 { maxSpawns: 1 }
             ));
-        }, 2 * 30 * 1000);
+        }, 15 * 60 * 1000);
     }
 }

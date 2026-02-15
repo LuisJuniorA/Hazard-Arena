@@ -49,6 +49,8 @@ export default class Player extends Entity {
         this.dashDirX = 0;
         this.dashDirY = 0;
 
+        this.auraBehavior = null;
+
     }
 
     grabXp(xpAmount) {
@@ -161,6 +163,18 @@ export default class Player extends Entity {
         const r = 20;
 
         ctx.save();
+
+        if (this.auraBehavior?.radius) {
+            const auraRadius = this.auraBehavior.radius;
+            const auraGradient = ctx.createRadialGradient(x, y, r, x, y, auraRadius);
+            auraGradient.addColorStop(0, 'rgba(255, 140, 0, 0.41)');
+            auraGradient.addColorStop(1, 'rgba(255, 140, 0, 0.26)');
+
+            ctx.fillStyle = auraGradient;
+            ctx.beginPath();
+            ctx.arc(x, y, auraRadius, 0, Math.PI * 2);
+            ctx.fill();
+        }
 
         // Glow
         const gradient = ctx.createRadialGradient(x, y, r / 2, x, y, r);
