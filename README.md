@@ -122,7 +122,7 @@ C:.
 
 ## 8. IA utilisée
 
-- **ChatGPT** : aide pour structurer le code, rédiger certains HUD et comportements, et produire ce README.  
+- **ChatGPT** : aide pour structurer le code, rédiger certains HUD et comportements, les assets, et produire ce README.  
 - Prompts utilisés :  
   - "Créer un HUD santé animé en canvas HTML5"  
   - "Créer un système de barre d'XP avec interpolation douce"  
